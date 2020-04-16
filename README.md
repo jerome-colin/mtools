@@ -23,6 +23,7 @@ With:
 Optional arguments:
 
 -v, --verbose : set log file verbosity to DEBUG (defaults to INFO)
+
 -e, --extent : set ROI extent (in meters). An ROI is a square of size extent*extent centered on (utmx, utmy)
 
 ## For help:
