@@ -74,8 +74,9 @@ class Roi_collection:
                 subset = roi_n.cut_band(product, band, logger)
                 samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
                 print(
-                    "name=%s, ROIid=%s, band=%s, samples=%i, min=%6.4f, max=%6.4f, avg=%6.4f, variance=%6.4f, skewness=%6.4f, kurtosis=%6.4f" %
-                    (product.name, roi_n.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
+                    #"name=%s, ROIid=%s, band=%s, samples=%i, min=%6.4f, max=%6.4f, avg=%6.4f, variance=%6.4f, skewness=%6.4f, kurtosis=%6.4f" %
+                    "%s, %s, %s, %i, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f" %
+                    (product.name, roi_n.id, band[:-1], samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
 
 
 
