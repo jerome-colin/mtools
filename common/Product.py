@@ -65,7 +65,7 @@ class Product:
             self.logger.error("No match found for band name %s" % band)
             sys.exit(2)
 
-    def get_zipped_band_subset_asarray(self, fband, logger, ulx, uly, lrx, lry):
+    def get_zipped_band_subset_asarray(self, fband, logger, ulx, uly, lrx, lry, scale=True):
         """Extract a Gdal object from an image file, optionally a subset from coordinates
         :param fband: product image file
         :param logger: logging object
@@ -93,7 +93,11 @@ class Product:
             logger.error(err)
             sys.exit(1)
 
-        return img.ReadAsArray()
+        if scale:
+            if "SRE" in fband:
+                return img.ReadAsArray() / self.sre_scalef
+        else:
+            return img.ReadAsArray()
 
     def get_zipped_band(self, fband):
         """
@@ -113,11 +117,22 @@ class Venus_product(Product):
     """
     Sub-class of Product for Venus specific methods
     """
+    def __init__(self, path, logger, ptype="ZIP"):
+        super().__init__(path, logger, ptype="ZIP")
+        self.band_names = ["SRE_B1.",
+                           "SRE_B2.",
+                           "SRE_B3.",
+                           "SRE_B4.",
+                           "SRE_B5.",
+                           "SRE_B6.",
+                           "SRE_B7.",
+                           "SRE_B8.",
+                           "SRE_B9.",
+                           "SRE_B10.",
+                           "SRE_B11.",
+                           "SRE_B12.",]
 
-    def get_bands(self):
-        # TODO: extend band list
-        # TODO: return scale factore per band if any"
-        return ["SRE_B2", "SRE_B4", "SRE_B7"]
+        self.sre_scalef = 1000
 
     def get_mask(self, mtype):
         pass

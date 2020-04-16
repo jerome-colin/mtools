@@ -62,7 +62,7 @@ class Roi_collection:
         :return:
         """
         # Get the list of bands to compute stats for
-        bands = product.get_bands()
+        bands = product.band_names
 
         # For each Roi in Roi_collection:
         for i in range(len(self.coord_arr)):
@@ -74,7 +74,7 @@ class Roi_collection:
                 subset = roi_n.cut_band(product, band, logger)
                 samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
                 print(
-                    "ROI id %s, band %s, samples=%i, min=%6.2f, max=%6.2f, avg=%6.2f, variance=%6.2f, skewness=%6.2f, kurtosis=%6.2f" %
+                    "ROI id %s, band %s, samples=%i, min=%6.4f, max=%6.4f, avg=%6.4f, variance=%6.4f, skewness=%6.4f, kurtosis=%6.4f" %
                     (roi_n.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
 
 
