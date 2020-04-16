@@ -33,6 +33,7 @@ class Product:
                 if zipfile.is_zipfile(self.path):
                     logger.info("Valid ZIP file found")
                     self.get_zip_content_list()
+                    self.name = self.path.split('/')[-1]
                 else:
                     logger.error("Invalid ZIP file found")
                     sys.exit(2)
@@ -133,6 +134,8 @@ class Venus_product(Product):
                            "SRE_B12.",]
 
         self.sre_scalef = 1000
+        self.clm_name = "CLM_XS"
+        self.edg_name = "EDG_XS"
 
     def get_mask(self, mtype):
         pass

@@ -43,8 +43,8 @@ def main():
 
     logger.info("Test common.Product.get_zipped_band_asarray...")
     b3_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename("SRE_B3"))
-    clm_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename("CLM_XS"))
-    edg_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename("EDG_XS"))
+    clm_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename(vns_product.clm_name))
+    edg_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename(vns_product.edg_name))
 
     logger.info("Test common.Product.get_zipped_band_subset_asarray...")
     b7_subset_from_zip = vns_product.get_zipped_band_subset_asarray(vns_product.get_zipped_band_filename("SRE_B7"), logger, ulx=658528,
