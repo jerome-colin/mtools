@@ -2,6 +2,8 @@
 """
 Compute statistics over a square ROI
 
+Require: see mtools.yml for conda environment configuration
+
 """
 
 __author__ = "Jerome Colin"
