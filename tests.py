@@ -10,6 +10,8 @@ import sys
 import argparse
 import zipfile
 import numpy as np
+from scipy import stats
+
 import gdal
 from matplotlib import pylab as pl
 import common.utilities as utl
@@ -33,9 +35,6 @@ def main():
     logger.info("Test common.Product.__init__...")
     vns_product = common.Product.Venus_product(args.product, logger)
 
-    logger.info("Test common.Roi.Roi_collection.__init__...")
-    roi_collection = common.Roi.Roi_collection(args.coordinates, args.extent, logger)
-
     logger.info("Test common.Product.get_zip_content_list...")
     vns_product.get_zip_content_list()
 
@@ -58,6 +57,16 @@ def main():
     logger.info("Test common.Product.get_quicklook...")
     vns_product.make_quicklook(b7_subset_from_zip, b4_subset_from_zip, b2_subset_from_zip, logger, outfile='test_data/test.png')
 
+
+    logger.info("Test common.Roi.Roi_collection.__init__...")
+    roi_collection = common.Roi.Roi_collection(args.coordinates, args.extent, logger)
+
+    logger.info("Test common.Roi.Roi.__init__...")
+    for i in range(len(roi_collection.coord_arr)):
+        roi_n = common.Roi.Roi(roi_collection.coord_arr[i],roi_collection.extent, logger)
+
+    n, minmax, avg, variance, skewness, kurtosis = stats.describe(b2_subset_from_zip, axis=None)
+    print(n, minmax, avg, variance, skewness, kurtosis)
 
     sys.exit(0)
 

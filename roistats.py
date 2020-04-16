@@ -39,14 +39,8 @@ def main():
     # Create an roi collection
     roi_collection = common.Roi.Roi_collection(args.coordinates, args.extent, logger)
 
-    # Explore the product ZIP file
-    vns_product.get_zip_content_list()
-
-    # TODO: extract subset from ROI object instead of full image
-
-    # Check if ROI extent is within the image
-
-    # Compute statistics
+    # Compute statistics for a given product
+    roi_collection.compute_stats_all_bands(vns_product, logger)
 
     sys.exit(0)
 

@@ -31,6 +31,20 @@ class Roi_collection:
             self.logger.error("Wrong extent given : %i" % self.extent)
             sys.exit(2)
 
-class Roi:
-    def __init__(self, latlon, extent):
+    def compute_stats_all_bands(self, product, logger):
         pass
+
+class Roi:
+    def __init__(self, id_utmx_utmy, extent, logger):
+        self.id = str(id_utmx_utmy[0])
+        self.utmx = id_utmx_utmy[1]
+        self.utmy = id_utmx_utmy[2]
+        self.extent = extent
+
+        # Compute ulx, uly, lrx, lry assuming UTM coordinates
+        self.ulx = self.utmx - self.extent
+        self.uly = self.utmy + self.extent
+        self.lrx = self.utmx + self.extent
+        self.lry = self.utmy - self.extent
+
+        logger.info('ROI id %s: ulx=%i, uly=%i, lrx=%i, lry=%i' % (self.id, self.ulx, self.uly, self.lrx, self.lry))
