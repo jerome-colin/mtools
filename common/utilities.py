@@ -1,7 +1,6 @@
 import logging
 import os
-import numpy as np
-import scipy as sp
+
 
 def get_logger(name, verbose=False):
     """
@@ -28,6 +27,3 @@ def get_logger(name, verbose=False):
 
     return logger
 
-def get_stats_from_array(arr):
-    v_arr = np.flatten(arr)
-    sp.stats.describe(v_arr)

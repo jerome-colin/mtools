@@ -1,3 +1,12 @@
+"""
+Generic product and Venus specific objects definitions
+
+"""
+
+__author__ = "Jerome Colin"
+__license__ = "MIT"
+__version__ = "0.1.0"
+
 import zipfile
 import sys
 import os
@@ -6,6 +15,7 @@ from xml.dom import minidom
 import gdal
 import numpy as np
 from PIL import Image as pillow
+
 
 class Product:
     def __init__(self, path, logger, ptype="ZIP"):
@@ -32,8 +42,6 @@ class Product:
             except FileNotFoundError as err:
                 logger.error(err)
                 sys.exit(1)
-
-
 
     def get_zip_content_list(self):
         """
@@ -71,7 +79,8 @@ class Product:
         """
 
         try:
-            translate = 'gdal_translate -projwin %s %s %s %s /vsizip/%s/%s %s' % (ulx, uly, lrx, lry, self.path, fband, ".tmp.tif")
+            translate = 'gdal_translate -projwin %s %s %s %s /vsizip/%s/%s %s' % (
+            ulx, uly, lrx, lry, self.path, fband, ".tmp.tif")
             logger.debug(translate)
             args = shlex.split(translate)
             prog = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -135,8 +144,11 @@ class Product:
 
         return img.astype(np.uint8)
 
+
 class Venus_product(Product):
     def get_bands(self):
+        # TODO: extend band list
+        # TODO: return scale factore per band if any"
         return ["SRE_B2", "SRE_B4", "SRE_B7"]
 
     def get_mask(self, mtype):
@@ -154,9 +166,3 @@ class Venus_product(Product):
         else:
             self.logger.error("No match found for metadata file")
             sys.exit(2)
-
-
-
-
-
-

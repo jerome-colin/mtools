@@ -1,3 +1,12 @@
+"""
+ROI collection and object definitions
+
+"""
+
+__author__ = "Jerome Colin"
+__license__ = "MIT"
+__version__ = "0.1.0"
+
 import numpy as np
 from scipy import stats
 import sys

@@ -29,7 +29,6 @@ def main():
     logger = utl.get_logger('roistats', args.verbose)
 
     # Create a Venus product object
-    logger.info("Checking arguments consistency...")
     vns_product = common.Product.Venus_product(args.product, logger)
 
     # Create an roi collection
