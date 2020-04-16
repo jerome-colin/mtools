@@ -13,8 +13,7 @@ import os
 import subprocess, shlex
 from xml.dom import minidom
 import gdal
-import numpy as np
-from PIL import Image as pillow
+
 
 
 class Product:
@@ -110,39 +109,7 @@ class Product:
         img = self.get_zipped_band(fband)
         return img.ReadAsArray()
 
-    def make_quicklook(self, r, g, b, logger, outfile="quicklook.png"):
-        """
-        Generate a quicklook as PNG
-        :param r: band name (should match string name in filename)
-        :param g: band name (should match string name in filename)
-        :param b: band name (should match string name in filename)
-        :param logger:
-        :param outfile:
-        :return: void
-        """
-        logger.info("Generating quicklook...")
-        red_band = self._convert_band_uint8(r)
-        green_band = self._convert_band_uint8(g)
-        blue_band = self._convert_band_uint8(b)
 
-        array_stack = np.dstack((red_band, green_band, blue_band))
-        img = pillow.fromarray(array_stack)
-        if outfile[-4:] != ".png":
-            outfile += ".png"
-
-        img.save(outfile)
-
-    def _convert_band_uint8(self, band):
-        """Convert a band array to unint8
-        :return: an unint8 numpy array
-        """
-        b_max = np.nanmax(band)
-        if b_max > 0:
-            img = band / b_max * 256
-        else:
-            img = band * 0
-
-        return img.astype(np.uint8)
 
 
 class Venus_product(Product):

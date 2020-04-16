@@ -55,7 +55,7 @@ def main():
                                                           uly=4244035, lrx=664529, lry=4238421)
 
     logger.info("Test common.Product.get_quicklook...")
-    vns_product.make_quicklook(b7_subset_from_zip, b4_subset_from_zip, b2_subset_from_zip, logger, outfile='test_data/test.png')
+    utl.make_quicklook_rgb(b7_subset_from_zip, b4_subset_from_zip, b2_subset_from_zip, logger, outfile='test_data/test.png')
 
 
     logger.info("Test common.Roi.Roi_collection.__init__...")
@@ -65,7 +65,11 @@ def main():
     for i in range(len(roi_collection.coord_arr)):
         roi_n = common.Roi.Roi(roi_collection.coord_arr[i],roi_collection.extent, logger)
 
-
+    logger.info("Test common.Roi.Roi.cut_band...")
+    sample_B2 = roi_n.cut_band(vns_product,"SRE_B2", logger)
+    sample_B4 = roi_n.cut_band(vns_product, "SRE_B4", logger)
+    sample_B7 = roi_n.cut_band(vns_product, "SRE_B7", logger)
+    utl.make_quicklook_rgb(sample_B7, sample_B4, sample_B2, logger, outfile='test_data/roi_sample_test.png')
 
     roi_collection.compute_stats_all_bands(vns_product, logger)
 

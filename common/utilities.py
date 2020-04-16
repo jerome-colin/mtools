@@ -1,6 +1,7 @@
 import logging
 import os
-
+import numpy as np
+from PIL import Image as pillow
 
 def get_logger(name, verbose=False):
     """
@@ -27,3 +28,40 @@ def get_logger(name, verbose=False):
 
     return logger
 
+def make_quicklook_rgb(r, g, b, logger, outfile="quicklook.png"):
+    """
+    Generate a quicklook as PNG
+    :param r: band name (should match string name in filename)
+    :param g: band name (should match string name in filename)
+    :param b: band name (should match string name in filename)
+    :param logger:
+    :param outfile:
+    :return: void
+    """
+    logger.info("Generating quicklook...")
+    red_band = _convert_band_uint8(r, vmax=300)
+    green_band = _convert_band_uint8(g, vmax=300)
+    blue_band = _convert_band_uint8(b, vmax=300)
+
+    array_stack = np.dstack((red_band, green_band, blue_band))
+    img = pillow.fromarray(array_stack)
+    if outfile[-4:] != ".png":
+        outfile += ".png"
+
+    img.save(outfile)
+
+def _convert_band_uint8(band, vmax=None):
+    """Convert a band array to unint8
+    :return: an unint8 numpy array
+    """
+    if vmax == None:
+        b_max = np.nanmax(band)
+    else:
+        b_max = vmax
+
+    if b_max > 0:
+        img = band / b_max * 256
+    else:
+        img = band * 0
+
+    return img.astype(np.uint8)

@@ -74,3 +74,8 @@ class Roi:
         self.lry = self.utmy - self.extent / 2
 
         logger.info('ROI id %s: ulx=%i, uly=%i, lrx=%i, lry=%i' % (self.id, self.ulx, self.uly, self.lrx, self.lry))
+
+    def cut_band(self, product, band, logger):
+        return product.get_zipped_band_subset_asarray(
+                    product.get_zipped_band_filename(band), logger, ulx=self.ulx,
+                    uly=self.uly, lrx=self.lrx, lry=self.lry)
