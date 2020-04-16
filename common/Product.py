@@ -15,7 +15,6 @@ from xml.dom import minidom
 import gdal
 
 
-
 class Product:
     def __init__(self, path, logger, ptype="ZIP"):
         """
@@ -79,7 +78,7 @@ class Product:
 
         try:
             translate = 'gdal_translate -projwin %s %s %s %s /vsizip/%s/%s %s' % (
-            ulx, uly, lrx, lry, self.path, fband, ".tmp.tif")
+                ulx, uly, lrx, lry, self.path, fband, ".tmp.tif")
             logger.debug(translate)
             args = shlex.split(translate)
             prog = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
@@ -110,9 +109,11 @@ class Product:
         return img.ReadAsArray()
 
 
-
-
 class Venus_product(Product):
+    """
+    Sub-class of Product for Venus specific methods
+    """
+
     def get_bands(self):
         # TODO: extend band list
         # TODO: return scale factore per band if any"
@@ -122,6 +123,10 @@ class Venus_product(Product):
         pass
 
     def parse_metadata(self):
+        """
+        TODO: adapt to zip files
+        :return:
+        """
         fname = self.get_metadata_fname()
         self.xml_meta = minidom.parse(fname)
 

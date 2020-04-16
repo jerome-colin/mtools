@@ -24,7 +24,7 @@ Optional arguments:
 
 -v, --verbose : set log file verbosity to DEBUG (defaults to INFO)
 
--e, --extent : set ROI extent (in meters). An ROI is a square of size extent*extent centered on (utmx, utmy)
+-e, --extent : set ROI extent (in meters, defaults to 100m). An ROI is a square of size extent*extent centered on (utmx, utmy)
 
 ## For help:
 
@@ -38,4 +38,4 @@ Dependency list provided as yaml conda environment file in:
 
 # MTOOLS
 
-Generic classes for product and ROI definition can be found in 'common'
+Generic classes for product and ROI definitions can be found in 'common'

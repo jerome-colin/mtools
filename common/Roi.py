@@ -11,8 +11,20 @@ import numpy as np
 from scipy import stats
 import sys
 
+
 class Roi_collection:
+    """
+    A collection of ROIs defined according to the coordinate file given to roistats
+    """
+
     def __init__(self, fname, extent, logger, delimiter=','):
+        """
+
+        :param fname: the coordinate file
+        :param extent: in mters
+        :param logger:
+        :param delimiter:
+        """
 
         self.fname = fname
         self.extent = extent
@@ -42,6 +54,13 @@ class Roi_collection:
             sys.exit(2)
 
     def compute_stats_all_bands(self, product, logger, quicklook=False):
+        """
+        Print statistiques for all bands of a product for all ROIs in collectoin
+        :param product: a Product instance
+        :param logger:
+        :param quicklook: not yet implemented
+        :return:
+        """
         # Get the list of bands to compute stats for
         bands = product.get_bands()
 
@@ -52,17 +71,21 @@ class Roi_collection:
 
             # For each band in product, extract a subset according to ROI and return stats
             for band in bands:
-                #subset = product.get_zipped_band_subset_asarray(
-                #    product.get_zipped_band_filename(band), logger, ulx=roi_n.ulx,
-                #    uly=roi_n.uly, lrx=roi_n.lrx, lry=roi_n.lry)
                 subset = roi_n.cut_band(product, band, logger)
                 samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
-                print("ROI id %s, band %s, samples=%i, min=%6.2f, max=%6.2f, avg=%6.2f, variance=%6.2f, skewness=%6.2f, kurtosis=%6.2f" %
-                      (roi_n.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
+                print(
+                    "ROI id %s, band %s, samples=%i, min=%6.2f, max=%6.2f, avg=%6.2f, variance=%6.2f, skewness=%6.2f, kurtosis=%6.2f" %
+                    (roi_n.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
 
 
 class Roi:
     def __init__(self, id_utmx_utmy, extent, logger):
+        """
+        Returns an ROI instance
+        :param id_utmx_utmy: a vector containing an id(int), utmx(float) and utmy(float).
+        :param extent: in meters
+        :param logger:
+        """
         self.id = str(int(id_utmx_utmy[0]))
         self.utmx = id_utmx_utmy[1]
         self.utmy = id_utmx_utmy[2]
@@ -77,6 +100,13 @@ class Roi:
         logger.info('ROI id %s: ulx=%i, uly=%i, lrx=%i, lry=%i' % (self.id, self.ulx, self.uly, self.lrx, self.lry))
 
     def cut_band(self, product, band, logger):
+        """
+        Returns a numpy array of a given band of a given product cut to fit the ROI
+        :param product: a Product instance
+        :param band: a string that helps identify a file in the zipped Product
+        :param logger:
+        :return: a numpy array
+        """
         return product.get_zipped_band_subset_asarray(
-                    product.get_zipped_band_filename(band), logger, ulx=self.ulx,
-                    uly=self.uly, lrx=self.lrx, lry=self.lry)
+            product.get_zipped_band_filename(band), logger, ulx=self.ulx,
+            uly=self.uly, lrx=self.lrx, lry=self.lry)
