@@ -52,9 +52,10 @@ class Roi_collection:
 
             # For each band in product, extract a subset according to ROI and return stats
             for band in bands:
-                subset = product.get_zipped_band_subset_asarray(
-                    product.get_zipped_band_filename(band), logger, ulx=roi_n.ulx,
-                    uly=roi_n.uly, lrx=roi_n.lrx, lry=roi_n.lry)
+                #subset = product.get_zipped_band_subset_asarray(
+                #    product.get_zipped_band_filename(band), logger, ulx=roi_n.ulx,
+                #    uly=roi_n.uly, lrx=roi_n.lrx, lry=roi_n.lry)
+                subset = roi_n.cut_band(product, band, logger)
                 samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
                 print("ROI id %s, band %s, samples=%i, min=%6.2f, max=%6.2f, avg=%6.2f, variance=%6.2f, skewness=%6.2f, kurtosis=%6.2f" %
                       (roi_n.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
