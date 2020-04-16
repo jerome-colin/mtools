@@ -3,6 +3,7 @@ import os
 import numpy as np
 from PIL import Image as pillow
 
+
 def get_logger(name, verbose=False):
     """
     Simple logger
@@ -28,6 +29,7 @@ def get_logger(name, verbose=False):
 
     return logger
 
+
 def make_quicklook_rgb(r, g, b, logger, outfile="quicklook.png"):
     """
     Generate a quicklook as PNG
@@ -49,6 +51,7 @@ def make_quicklook_rgb(r, g, b, logger, outfile="quicklook.png"):
         outfile += ".png"
 
     img.save(outfile)
+
 
 def _convert_band_uint8(band, vmax=None):
     """Convert a band array to unint8
