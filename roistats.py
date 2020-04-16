@@ -10,10 +10,6 @@ __version__ = "0.1.0"
 
 import sys
 import argparse
-import zipfile
-import numpy as np
-import gdal
-from matplotlib import pylab as pl
 import common.utilities as utl
 import common.Product
 import common.Roi

@@ -1,4 +1,5 @@
 import numpy as np
+from scipy import stats
 import sys
 
 class Roi_collection:
@@ -32,11 +33,28 @@ class Roi_collection:
             sys.exit(2)
 
     def compute_stats_all_bands(self, product, logger):
-        pass
+        # Get the list of bands to compute stats for
+        bands = product.get_bands()
+
+        # For each Roi in Roi_collection:
+        for i in range(len(self.coord_arr)):
+            # Get an ROI object
+            roi_n = Roi(self.coord_arr[i], self.extent, logger)
+
+            # For each band in product, extract a subset according to ROI and return stats
+            for band in bands:
+                subset = product.get_zipped_band_subset_asarray(
+                    product.get_zipped_band_filename(band), logger, ulx=roi_n.ulx,
+                    uly=roi_n.uly, lrx=roi_n.lrx, lry=roi_n.lry)
+                samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
+                #print(samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis)
+                print("ROI id %s, band %s, samples=%i, min=%6.2f, max=%6.2f, avg=%6.2f, variance=%6.2f, skewness=%6.2f, kurtosis=%6.2f" %
+                      (roi_n.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
+
 
 class Roi:
     def __init__(self, id_utmx_utmy, extent, logger):
-        self.id = str(id_utmx_utmy[0])
+        self.id = str(int(id_utmx_utmy[0]))
         self.utmx = id_utmx_utmy[1]
         self.utmy = id_utmx_utmy[2]
         self.extent = extent

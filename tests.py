@@ -65,8 +65,9 @@ def main():
     for i in range(len(roi_collection.coord_arr)):
         roi_n = common.Roi.Roi(roi_collection.coord_arr[i],roi_collection.extent, logger)
 
-    n, minmax, avg, variance, skewness, kurtosis = stats.describe(b2_subset_from_zip, axis=None)
-    print(n, minmax, avg, variance, skewness, kurtosis)
+
+
+    roi_collection.compute_stats_all_bands(vns_product, logger)
 
     sys.exit(0)
 

@@ -24,6 +24,7 @@ class Product:
             try:
                 if zipfile.is_zipfile(self.path):
                     logger.info("Valid ZIP file found")
+                    self.get_zip_content_list()
                 else:
                     logger.error("Invalid ZIP file found")
                     sys.exit(2)
@@ -135,7 +136,8 @@ class Product:
         return img.astype(np.uint8)
 
 class Venus_product(Product):
-
+    def get_bands(self):
+        return ["SRE_B2", "SRE_B4", "SRE_B7"]
 
     def get_mask(self, mtype):
         pass
