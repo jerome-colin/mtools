@@ -32,6 +32,8 @@ class Product:
                 logger.error(err)
                 sys.exit(1)
 
+
+
     def get_zip_content_list(self):
         """
         Creates a zip_content_list attribute with the list of files in a zip archive
@@ -46,6 +48,15 @@ class Product:
 
         else:
             self.logger.warning("Not yet implemented")
+
+    def get_zipped_band_filename(self, band):
+        fband_name = [b for b in self.zip_content_list if band in b]
+        if len(fband_name) == 1:
+            self.logger.info("Found file %s for band name %s" % (fband_name[0], band))
+            return fband_name[0]
+        else:
+            self.logger.error("No match found for band name %s" % band)
+            sys.exit(2)
 
     def get_zipped_band_subset_asarray(self, fband, logger, ulx, uly, lrx, lry):
         """Extract a Gdal object from an image file, optionally a subset from coordinates
@@ -89,6 +100,28 @@ class Product:
         img = self.get_zipped_band(fband)
         return img.ReadAsArray()
 
+    def make_quicklook(self, r, g, b, logger, outfile="quicklook.png"):
+        """
+        Generate a quicklook as PNG
+        :param r: band name (should match string name in filename)
+        :param g: band name (should match string name in filename)
+        :param b: band name (should match string name in filename)
+        :param logger:
+        :param outfile:
+        :return: void
+        """
+        logger.info("Generating quicklook...")
+        red_band = self._convert_band_uint8(r)
+        green_band = self._convert_band_uint8(g)
+        blue_band = self._convert_band_uint8(b)
+
+        array_stack = np.dstack((red_band, green_band, blue_band))
+        img = pillow.fromarray(array_stack)
+        if outfile[-4:] != ".png":
+            outfile += ".png"
+
+        img.save(outfile)
+
     def _convert_band_uint8(self, band):
         """Convert a band array to unint8
         :return: an unint8 numpy array
@@ -102,14 +135,7 @@ class Product:
         return img.astype(np.uint8)
 
 class Venus_product(Product):
-    def get_band_filename(self, band):
-        fband_name = [b for b in self.zip_content_list if band in b]
-        if len(fband_name) == 1:
-            self.logger.info("Found file %s for band name %s" % (fband_name[0], band))
-            return fband_name[0]
-        else:
-            self.logger.error("No match found for band name %s" % band)
-            sys.exit(2)
+
 
     def get_mask(self, mtype):
         pass
@@ -127,28 +153,7 @@ class Venus_product(Product):
             self.logger.error("No match found for metadata file")
             sys.exit(2)
 
-    def get_quicklook(self, r, g, b, logger, outfile="quicklook.png"):
-        """
-        Generate a quicklook as PNG
-        :param r: band name (should match string name in filename)
-        :param g: band name (should match string name in filename)
-        :param b: band name (should match string name in filename)
-        :param logger:
-        :param outfile:
-        :return: void
-        """
-        logger.info("Generating quicklook...")
-        # TODO: sortie l'hypothèse du zip de la fonction
-        red_band = self._convert_band_uint8(self.get_zipped_band_asarray(self.get_band_filename(r)))
-        green_band = self._convert_band_uint8(self.get_zipped_band_asarray(self.get_band_filename(g)))
-        blue_band = self._convert_band_uint8(self.get_zipped_band_asarray(self.get_band_filename(b)))
 
-        array_stack = np.dstack((red_band, green_band, blue_band))
-        img = pillow.fromarray(array_stack)
-        if outfile[-4:] != ".png":
-            outfile += ".png"
-
-        img.save(outfile)
 
 
 

@@ -42,20 +42,6 @@ def main():
     # Explore the product ZIP file
     vns_product.get_zip_content_list()
 
-    # Demo
-    b3_img = vns_product.get_zipped_band_asarray(vns_product.get_band_filename("SRE_B3"))
-    clm_img = vns_product.get_zipped_band_asarray(vns_product.get_band_filename("CLM_XS"))
-    edg_img = vns_product.get_zipped_band_asarray(vns_product.get_band_filename("EDG_XS"))
-    # vns_product.get_quicklook("SRE_B7","SRE_B4","SRE_B2", logger)
-
-    subset_from_zip = vns_product.get_zipped_band_subset_asarray(vns_product.get_band_filename("SRE_B3"), logger, ulx=658528,
-                                                          uly=4244035, lrx=664529, lry=4238421)
-
-    pl.imshow(subset_from_zip)
-    pl.show()
-
-    # vns_product.parse_metadata()
-
     # TODO: extract subset from ROI object instead of full image
 
     # Check if ROI extent is within the image
