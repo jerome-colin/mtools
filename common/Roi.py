@@ -41,7 +41,7 @@ class Roi_collection:
             self.logger.error("Wrong extent given : %i" % self.extent)
             sys.exit(2)
 
-    def compute_stats_all_bands(self, product, logger):
+    def compute_stats_all_bands(self, product, logger, quicklook=False):
         # Get the list of bands to compute stats for
         bands = product.get_bands()
 
@@ -56,7 +56,6 @@ class Roi_collection:
                     product.get_zipped_band_filename(band), logger, ulx=roi_n.ulx,
                     uly=roi_n.uly, lrx=roi_n.lrx, lry=roi_n.lry)
                 samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
-                #print(samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis)
                 print("ROI id %s, band %s, samples=%i, min=%6.2f, max=%6.2f, avg=%6.2f, variance=%6.2f, skewness=%6.2f, kurtosis=%6.2f" %
                       (roi_n.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
 
@@ -69,9 +68,9 @@ class Roi:
         self.extent = extent
 
         # Compute ulx, uly, lrx, lry assuming UTM coordinates
-        self.ulx = self.utmx - self.extent
-        self.uly = self.utmy + self.extent
-        self.lrx = self.utmx + self.extent
-        self.lry = self.utmy - self.extent
+        self.ulx = self.utmx - self.extent / 2
+        self.uly = self.utmy + self.extent / 2
+        self.lrx = self.utmx + self.extent / 2
+        self.lry = self.utmy - self.extent / 2
 
         logger.info('ROI id %s: ulx=%i, uly=%i, lrx=%i, lry=%i' % (self.id, self.ulx, self.uly, self.lrx, self.lry))
