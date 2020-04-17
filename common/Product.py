@@ -16,7 +16,7 @@ import osgeo.gdal as gdal
 
 
 class Product:
-    def __init__(self, path, logger, ptype="ZIP"):
+    def __init__(self, path, logger, ptype="ZIP", sensor="venus"):
         """
         Create a product object
         :param path: product path or product file name if ptype is ZIP
@@ -26,6 +26,8 @@ class Product:
         self.path = path
         self.logger = logger
         self.ptype = ptype
+
+        #fband_name = [b for b in self.zip_content_list if band in b]
 
         # Consistency check
         if self.ptype == "ZIP":
