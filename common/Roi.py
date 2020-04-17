@@ -53,7 +53,7 @@ class Roi_collection:
             self.logger.error("Wrong extent given : %i" % self.extent)
             sys.exit(2)
 
-    def compute_stats_all_bands(self, product, logger, quicklook=False):
+    def compute_stats_all_bands(self, product, logger, stdout=False):
         """
         Print statistiques for all bands of a product for all ROIs in collectoin
         :param product: a Product instance
@@ -64,6 +64,8 @@ class Roi_collection:
         # Get the list of bands to compute stats for
         bands = product.band_names
 
+        list_stats = []
+
         # For each Roi in Roi_collection:
         for i in range(len(self.coord_arr)):
             # Get an ROI object
@@ -71,13 +73,20 @@ class Roi_collection:
 
             # For each band in product, extract a subset according to ROI and return stats
             for band in bands:
-                subset = roi_n.cut_band(product, band, logger)
-                samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
-                print(
-                    # "name=%s, ROIid=%s, band=%s, samples=%i, min=%6.4f, max=%6.4f, avg=%6.4f, variance=%6.4f, skewness=%6.4f, kurtosis=%6.4f" %
-                    "%s, %s, %s, %i, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f" %
-                    (product.name, roi_n.id, band[:-1], samples, minmax[0], minmax[1], avg, variance, skewness,
-                     kurtosis))
+                # samples, minmax, avg, variance, skewness, kurtosis
+                stats = self.compute_stats_oneband(roi_n, product, band)
+                list_stats.append(stats)
+                if stdout:
+                    print("%s, %s, %s, %i, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f" %
+                          (product.name, roi_n.id, band[:-1], stats[0], stats[1][0], stats[1][1], stats[2], stats[3],
+                           stats[4],
+                           stats[5]))
+
+        return list_stats
+
+    def compute_stats_oneband(self, roi, product, band):
+        subset = roi.cut_band(product, band, self.logger)
+        return stats.describe(subset, axis=None)
 
 
 class Roi:
