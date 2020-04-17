@@ -1,3 +1,12 @@
+"""
+Pytest for Product
+
+"""
+
+__author__ = "Jerome Colin"
+__license__ = "MIT"
+__version__ = "0.1.0"
+
 import Product
 import utilities
 
