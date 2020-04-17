@@ -12,7 +12,7 @@ import sys
 import os
 import subprocess, shlex
 from xml.dom import minidom
-import gdal
+import osgeo.gdal as gdal
 
 
 class Product:
