@@ -36,23 +36,23 @@ def main():
     vns_product = common.Product.Venus_product(args.product, logger)
 
     logger.info("Test common.Product.get_zip_content_list...")
-    vns_product.get_zip_content_list()
+    vns_product._get_zip_content_list()
 
     logger.info("Test common.Product.get_zip_content_list...")
-    b3_name = vns_product.get_zipped_band_filename("SRE_B3")
+    b3_name = vns_product.get_band_filename("SRE_B3")
 
     logger.info("Test common.Product.get_zipped_band_asarray...")
-    b3_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename("SRE_B3"))
-    clm_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename(vns_product.clm_name))
-    edg_img = vns_product.get_zipped_band_asarray(vns_product.get_zipped_band_filename(vns_product.edg_name))
+    b3_img = vns_product.get_band_asarray(vns_product.get_band_filename("SRE_B3"))
+    clm_img = vns_product.get_band_asarray(vns_product.get_band_filename(vns_product.clm_name))
+    edg_img = vns_product.get_band_asarray(vns_product.get_band_filename(vns_product.edg_name))
 
     logger.info("Test common.Product.get_zipped_band_subset_asarray...")
-    b7_subset_from_zip = vns_product.get_zipped_band_subset_asarray(vns_product.get_zipped_band_filename("SRE_B7"), logger, ulx=658528,
-                                                          uly=4244035, lrx=664529, lry=4238421)
-    b4_subset_from_zip = vns_product.get_zipped_band_subset_asarray(vns_product.get_zipped_band_filename("SRE_B4"), logger, ulx=658528,
-                                                          uly=4244035, lrx=664529, lry=4238421)
-    b2_subset_from_zip = vns_product.get_zipped_band_subset_asarray(vns_product.get_zipped_band_filename("SRE_B2"), logger, ulx=658528,
-                                                          uly=4244035, lrx=664529, lry=4238421)
+    b7_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.get_band_filename("SRE_B7"), logger, ulx=658528,
+                                                                     uly=4244035, lrx=664529, lry=4238421)
+    b4_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.get_band_filename("SRE_B4"), logger, ulx=658528,
+                                                                     uly=4244035, lrx=664529, lry=4238421)
+    b2_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.get_band_filename("SRE_B2"), logger, ulx=658528,
+                                                                     uly=4244035, lrx=664529, lry=4238421)
 
     logger.info("Test common.Product.get_quicklook...")
     utl.make_quicklook_rgb(b7_subset_from_zip, b4_subset_from_zip, b2_subset_from_zip, logger, outfile='test_data/test.png')

@@ -39,7 +39,7 @@ def test_Roi_xy_type():
 
 
 ### TESTING Control pixel values for a subset of 2x2 pixels in band 4
-p_venus = Product.Venus_product("test_data/VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger, ptype="ZIP")
+p_venus = Product.Venus_product("test_data/VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
 r_2x2 = Roi.Roi([22,649460,4238440], 10, logger)
 
 p_venus_b4_subset = r_2x2.cut_band(p_venus, "SRE_B4.", logger)
