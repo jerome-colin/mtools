@@ -38,7 +38,6 @@ def main():
 
     # Compute statistics for a given product
     list_stats = roi_collection.compute_stats_all_bands(vns_product, logger, stdout=True)
-    print(list_stats[15])
 
     sys.exit(0)
 
