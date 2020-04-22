@@ -1,4 +1,4 @@
-# mtools common tests
+# USED FOR BACKWARD COMPATIBILITY TESTING
 # require : test_data/ directory
 
 
@@ -39,19 +39,19 @@ def main():
     vns_product._get_zip_content_list()
 
     logger.info("Test common.Product.get_zip_content_list...")
-    b3_name = vns_product.get_band_filename("SRE_B3")
+    b3_name = vns_product.find_band("SRE_B3")
 
     logger.info("Test common.Product.get_zipped_band_asarray...")
-    b3_img = vns_product.get_band_asarray(vns_product.get_band_filename("SRE_B3"))
-    clm_img = vns_product.get_band_asarray(vns_product.get_band_filename(vns_product.clm_name))
-    edg_img = vns_product.get_band_asarray(vns_product.get_band_filename(vns_product.edg_name))
+    b3_img = vns_product.get_band_asarray(vns_product.find_band("SRE_B3"))
+    clm_img = vns_product.get_band_asarray(vns_product.find_band(vns_product.clm_name))
+    edg_img = vns_product.get_band_asarray(vns_product.find_band(vns_product.edg_name))
 
     logger.info("Test common.Product.get_zipped_band_subset_asarray...")
-    b7_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.get_band_filename("SRE_B7"), logger, ulx=658528,
+    b7_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.find_band("SRE_B7"), logger, ulx=658528,
                                                                      uly=4244035, lrx=664529, lry=4238421)
-    b4_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.get_band_filename("SRE_B4"), logger, ulx=658528,
+    b4_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.find_band("SRE_B4"), logger, ulx=658528,
                                                                      uly=4244035, lrx=664529, lry=4238421)
-    b2_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.get_band_filename("SRE_B2"), logger, ulx=658528,
+    b2_subset_from_zip = vns_product._get_zipped_band_subset_asarray(vns_product.find_band("SRE_B2"), logger, ulx=658528,
                                                                      uly=4244035, lrx=664529, lry=4238421)
 
     logger.info("Test common.Product.get_quicklook...")
