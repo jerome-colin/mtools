@@ -14,6 +14,7 @@ import subprocess, shlex
 from xml.dom import minidom
 import osgeo.gdal as gdal
 import glob
+import numpy as np
 
 
 class Product:
@@ -27,18 +28,21 @@ class Product:
         self.path = path
         self.logger = logger
 
-        #fband_name = [b for b in self.zip_content_list if band in b]
+        # fband_name = [b for b in self.zip_content_list if band in b]
 
         # Consistency check
         try:
             if zipfile.is_zipfile(self.path):
-                logger.info("Valid ZIP file found")
+                logger.info("ZIP file found")
                 self.ptype = "ZIP"
 
-
             elif os.path.isdir(path):
-                logger.info("Valid directory found")
+                logger.info("Directory based product found")
                 self.ptype = "DIR"
+
+            elif path[-3:] == "hdf" or path[-3:] == "HDF":
+                logger.info("HDF file found")
+                self.ptype = "HDF"
 
             else:
                 logger.error("Unknown product")
@@ -57,11 +61,18 @@ class Product:
         elif self.ptype == "DIR":
             self._get_dir_content_list()
 
+        elif self.ptype == "HDF":
+            self._get_hdf_content_list()
+
         else:
             self.logger.warning("Not yet implemented")
 
     def _get_dir_content_list(self):
         self.content_list = glob.glob(self.path + '/*')
+
+    def _get_hdf_content_list(self):
+        hdf_ds = gdal.Open(self.path, gdal.GA_ReadOnly)
+        self.content_list = hdf_ds.GetSubDatasets()
 
     def _get_zip_content_list(self):
         """
@@ -74,7 +85,7 @@ class Product:
             for element in self.content_list:
                 self.logger.debug(element)
 
-    def get_band_filename(self, band):
+    def find_band(self, band):
         fband_name = [b for b in self.content_list if band in b]
         if len(fband_name) == 1:
             self.logger.info("Found file %s for band name %s" % (fband_name[0], band))
@@ -136,10 +147,11 @@ class Product:
         return img.ReadAsArray()
 
 
-class Maja_acix_product(Product):
+class Acix_maja_product(Product):
     """
     Sub-class of Product for Venus specific methods
     """
+
     def __init__(self, path, logger):
         super().__init__(path, logger)
         self.band_names = ["SRE_B1.",
@@ -154,17 +166,59 @@ class Maja_acix_product(Product):
                            "SRE_B9.",
                            "SRE_B10.",
                            "SRE_B11.",
-                           "SRE_B12.",]
+                           "SRE_B12.", ]
 
         self.sre_scalef = 10000
         self.clm_name = "CLM_R1"
         self.edg_name = "EDG_R1"
 
 
+class Acix_vermote_product(Product):
+    """
+    Sub-class of Product for Venus specific methods
+    """
+
+    def __init__(self, path, logger):
+        super().__init__(path, logger)
+
+    def find_band(self, band):
+        """
+        Overriding mother class method
+        :param band:
+        :return:
+        """
+        is_unique = 0
+        subds_id = -1
+        for b in range(len(self.content_list)):
+            subds_name = self.content_list[b][1]
+            if subds_name.find(band) != -1:
+                subds_id = b
+                is_unique += 1
+                self.logger.info("Found %s in subdataset %s" % (band, subds_name))
+
+        if is_unique == 0:
+            self.logger.error("No subdataset found for band name %s in %s" % (band, self.path))
+
+        if is_unique > 1:
+            self.logger.error("Many subdataset found for band name %s in %s" % (band, self.path))
+
+        if is_unique == 1:
+            return subds_id
+
+    def get_band_asarray(self, fband):
+        """
+        Overriding mother class method
+        :param fband:
+        :return:
+        """
+        return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray().astype(np.int16)
+
+
 class Venus_product(Product):
     """
     Sub-class of Product for Venus specific methods
     """
+
     def __init__(self, path, logger):
         super().__init__(path, logger)
         self.band_names = ["SRE_B1.",
@@ -178,7 +232,7 @@ class Venus_product(Product):
                            "SRE_B9.",
                            "SRE_B10.",
                            "SRE_B11.",
-                           "SRE_B12.",]
+                           "SRE_B12.", ]
 
         self.sre_scalef = 1000
         self.clm_name = "CLM_XS"
