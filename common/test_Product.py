@@ -9,6 +9,8 @@ __version__ = "0.1.0"
 
 import Product
 import utilities
+import numpy
+from matplotlib import pylab as pl
 
 logger = utilities.get_logger('test_Product', verbose=True)
 
@@ -30,8 +32,13 @@ def test_venus_product_name():
 
 def test_get_band_filename_from_zip():
     logger.info("test_get_band_filename_from_zip")
-    fname = venus_product._get_band_filename("SRE_B4.")
+    fname = venus_product.get_band_filename("SRE_B4.")
     assert fname == "VENUS-XS_20200402-191352-000_L2A_GALLOP30_C_V2-2/VENUS-XS_20200402-191352-000_L2A_GALLOP30_C_V2-2_SRE_B4.tif"
+
+def test_get_venus_band_asarray():
+    logger.info("test_get_venus_band_asarray")
+    venus_band_asarray = venus_product.get_band_asarray(venus_product.get_band_filename("SRE_B4."))
+    assert type(venus_band_asarray) is numpy.ndarray
 
 dir_product = Product.Product("test_data/acix_captentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0", logger)
 
@@ -45,5 +52,10 @@ def test_dir_content_list():
 
 def test_get_band_filename_from_dir():
     logger.info("test_get_band_filename_from_dir")
-    fname = dir_product._get_band_filename("SRE_B4.")
+    fname = dir_product.get_band_filename("SRE_B4.")
     assert fname == "test_data/acix_captentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0_SRE_B4.tif"
+
+def test_get_venus_band_asarray():
+    logger.info("test_get_venus_band_asarray")
+    dir_band_asarray = dir_product.get_band_asarray(dir_product.get_band_filename("SRE_B4."))
+    assert type(dir_band_asarray) is numpy.ndarray

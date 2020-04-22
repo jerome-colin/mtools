@@ -74,7 +74,7 @@ class Product:
             for element in self.content_list:
                 self.logger.debug(element)
 
-    def _get_band_filename(self, band):
+    def get_band_filename(self, band):
         fband_name = [b for b in self.content_list if band in b]
         if len(fband_name) == 1:
             self.logger.info("Found file %s for band name %s" % (fband_name[0], band))
@@ -117,17 +117,22 @@ class Product:
         else:
             return img.ReadAsArray()
 
-    def _get_zipped_band(self, fband):
+    def _get_band(self, fband):
         """
         Return a gdal object from an image in a zip archive
         :param fband:
         :return: gdal object
         """
-        self.logger.debug('Gdal.Open using /vsizip/%s/%s' % (self.path, fband))
-        return gdal.Open('/vsizip/%s/%s' % (self.path, fband))
+        if self.ptype == "ZIP":
+            self.logger.debug('Gdal.Open using /vsizip/%s/%s' % (self.path, fband))
+            return gdal.Open('/vsizip/%s/%s' % (self.path, fband))
 
-    def _get_zipped_band_asarray(self, fband):
-        img = self._get_zipped_band(fband)
+        elif self.ptype == "DIR":
+            self.logger.debug('Gdal.Open using %s' % (fband))
+            return gdal.Open('%s' % (fband))
+
+    def get_band_asarray(self, fband):
+        img = self._get_band(fband)
         return img.ReadAsArray()
 
 
