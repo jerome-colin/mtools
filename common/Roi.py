@@ -119,7 +119,7 @@ class Roi:
         :return: a numpy array
         """
         return product._get_zipped_band_subset_asarray(
-            product._get_zipped_band_filename(band), logger, ulx=self.ulx,
+            product._get_band_filename(band), logger, ulx=self.ulx,
             uly=self.uly, lrx=self.lrx, lry=self.lry)
 
     def get_stacked_asarray(self, product, logger):

@@ -74,7 +74,7 @@ class Product:
             for element in self.content_list:
                 self.logger.debug(element)
 
-    def _get_zipped_band_filename(self, band):
+    def _get_band_filename(self, band):
         fband_name = [b for b in self.content_list if band in b]
         if len(fband_name) == 1:
             self.logger.info("Found file %s for band name %s" % (fband_name[0], band))
