@@ -9,6 +9,7 @@ __version__ = "0.1.0"
 
 import os, sys
 import numpy as np
+import re
 
 class Collection:
 
@@ -16,6 +17,7 @@ class Collection:
         self.path = path
         self.logger = logger
         self.content_list = self._discover()
+        self.products_timestamps = self._get_products_timestamps()
 
     def _discover(self):
         """
@@ -89,4 +91,18 @@ class Collection:
         return product_list
 
     def _get_products_timestamps(self):
-        pass
+        """
+        Identify a YYYYMMDD pattern in product names of Collection
+        :return: a list of [product name, YYYYMMDD]
+        """
+        products_date = []
+        for item in self.content_list:
+            self.logger.debug("Looking for timestamp in %s" % item)
+            numbers = re.findall(r'[0-9]{8}', item)
+            if len(numbers) != 1:
+                self.logger.warning("Found many date patterns for item %s: %s" % (item, numbers))
+            else:
+                products_date.append([item, numbers[0]])
+
+        self.logger.debug(products_date)
+        return  products_date
