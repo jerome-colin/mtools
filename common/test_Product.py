@@ -46,7 +46,7 @@ def test_get_venus_band_asarray():
 
 ### TESTING Directory based product (actually acix maja)
 
-dir_product = Product.Product("test_data/acix_captentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0", logger)
+dir_product = Product.Product("test_data/acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0", logger)
 
 def test_dir_product_type():
     logger.info("test_dir_product_type")
@@ -59,7 +59,7 @@ def test_dir_content_list():
 def test_get_band_filename_from_dir():
     logger.info("test_get_band_filename_from_dir")
     fname = dir_product.find_band("SRE_B4.")
-    assert fname == "test_data/acix_captentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0_SRE_B4.tif"
+    assert fname == "test_data/acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0_SRE_B4.tif"
 
 def test_get_band_dir_asarray_type():
     logger.info("test_get_band_dir_asarray_type")
