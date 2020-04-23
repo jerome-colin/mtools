@@ -72,17 +72,17 @@ class Collection:
         if type_max == 0:
             for item in items:
                 if os.path.isfile(self.path + item) and (item[-3:] == "zip" or item[-3:] == "ZIP"):
-                    product_list.append(item)
+                    product_list.append(self.path + item)
 
         elif type_max == 1:
             for item in items:
                 if os.path.isfile(self.path + item) and (item[-3:] == "hdf" or item[-3:] == "HDF"):
-                    product_list.append(item)
+                    product_list.append(self.path + item)
 
         elif type_max == 2:
             for item in items:
                 if os.path.isdir(self.path + item):
-                    product_list.append(item)
+                    product_list.append(self.path + item)
 
         else:
             self.logger.error("No any recognized product in collection path %s" % self.path)
