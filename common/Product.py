@@ -45,13 +45,15 @@ class Product:
                 self.ptype = "HDF"
 
             else:
-                logger.error("Unknown product")
-
-            self.get_content_list()
+                if os.path.isfile(self.path) == False:
+                    logger.error("Unknown product or file not found: %s" % self.path)
+                    sys.exit(2)
 
         except FileNotFoundError as err:
             logger.error(err)
             sys.exit(1)
+
+        self.get_content_list()
 
     def get_content_list(self):
         if self.ptype == "ZIP":
