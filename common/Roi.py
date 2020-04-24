@@ -82,10 +82,8 @@ class Roi_collection:
                 list_stats.append(stats)
                 if stdout:
                     if stats is not None:
-                        print("%s, %s, %s, %i, %i, %6.1f%%, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f, %6.4f" %
-                              (product.name, roi_n.id, band[:-1], band_size, stats[0], stats[0]/band_size*100, stats[1][0], stats[1][1], stats[2], stats[3],
-                               stats[4],
-                               stats[5]))
+                        print("%s, %s, %s, %i, %i, %6.1f%%, %6.4f, %6.4f, %6.4f, %6.4f" %
+                              (product.name, roi_n.id, band[:-1], band_size, stats[0], stats[0]/band_size*100, stats[1][0], stats[1][1], stats[2], stats[3]))
                     else:
                         print("%s, %s, %s, no valid pixel in ROI (fully cloudy or out of edge)" % (product.name, roi_n.id, band[:-1]))
 
