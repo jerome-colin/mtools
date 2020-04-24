@@ -120,6 +120,18 @@ class Roi:
         """
         return product._get_zipped_band_subset_asarray(
             product.find_band(band), logger, ulx=self.ulx,
+            uly=self.uly, lrx=self.lrx, lry=self.lry) / product.sre_scalef
+
+    def cut_mask(self, product, band, logger):
+        """
+        Returns a numpy array of a given band of a given product cut to fit the ROI
+        :param product: a Product instance
+        :param band: a string that helps identify a file in the zipped Product
+        :param logger:
+        :return: a numpy array
+        """
+        return product._get_zipped_band_subset_asarray(
+            product.find_band(band), logger, ulx=self.ulx,
             uly=self.uly, lrx=self.lrx, lry=self.lry)
 
     def get_stacked_asarray(self, product, logger):

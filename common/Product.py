@@ -27,6 +27,7 @@ class Product:
         """
         self.path = path
         self.logger = logger
+        self.sre_scalef = 1.
 
         # fband_name = [b for b in self.zip_content_list if band in b]
 
@@ -96,7 +97,7 @@ class Product:
             self.logger.error("No match found for band name %s" % band)
             sys.exit(2)
 
-    def _get_zipped_band_subset_asarray(self, fband, logger, ulx, uly, lrx, lry, scale=True):
+    def _get_zipped_band_subset_asarray(self, fband, logger, ulx, uly, lrx, lry):
         """Extract a Gdal object from an image file, optionally a subset from coordinates
         :param fband: product image file
         :param logger: logging object
@@ -124,11 +125,7 @@ class Product:
             logger.error(err)
             sys.exit(1)
 
-        if scale:
-            if "SRE" in fband:
-                return img.ReadAsArray() / self.sre_scalef
-        else:
-            return img.ReadAsArray()
+        return img.ReadAsArray()
 
     def _get_band(self, fband):
         """
@@ -146,8 +143,11 @@ class Product:
 
     def get_band_asarray(self, fband):
         img = self._get_band(fband)
-        return img.ReadAsArray()
+        return img.ReadAsArray() / self.sre_scalef
 
+    def get_mask_asarray(self, fband):
+        img = self._get_band(fband)
+        return img.ReadAsArray()
 
 class Acix_maja_product(Product):
     """

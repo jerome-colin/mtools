@@ -44,11 +44,23 @@ r_2x2 = Roi.Roi([22,649460,4238440], 10, logger)
 
 p_venus_b4_subset = r_2x2.cut_band(p_venus, "SRE_B4.", logger)
 
+def test_venus_subset_nocloud_type():
+    assert type(p_venus_b4_subset) is numpy.ndarray
+
 def test_product_roi_cut_px_values():
     assert p_venus_b4_subset[0,0] == 0.093
     assert p_venus_b4_subset[1,0] == 0.086
     assert p_venus_b4_subset[0,1] == 0.113
     assert p_venus_b4_subset[1,1] == 0.094
+
+### TESTING Fully cloudy ROI
+r_fully_cloudy = Roi.Roi([44,679016,4245740], 100, logger)
+p_venus_b4_fully_cloudy_subset = r_fully_cloudy.cut_band(p_venus, "SRE_B4.", logger)
+p_venus_cml_fully_cloudy_subset = r_fully_cloudy.cut_mask(p_venus, "CLM_XS", logger)
+
+def test_clm_fully_cloudy_type():
+    assert type(p_venus_cml_fully_cloudy_subset) is numpy.ndarray
+
 
 # TESTING Statistics for Roi_collection.compute_stats_all_bands
 collection_10m = Roi.Roi_collection("test_data/demo.csv", 10, logger)

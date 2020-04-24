@@ -44,6 +44,11 @@ def test_get_venus_band_asarray():
     venus_band_asarray = venus_product.get_band_asarray(venus_product.find_band("SRE_B4."))
     assert type(venus_band_asarray) is numpy.ndarray
 
+def test_get_venus_mask_asarray():
+    logger.info("test_get_venus_mask_asarray")
+    venus_mask_asarray = venus_product.get_band_asarray(venus_product.find_band("CLM_XS"))
+    assert type(venus_mask_asarray) is numpy.ndarray
+
 ### TESTING Directory based product (actually acix maja)
 
 dir_product = Product.Product("test_data/acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0", logger)
