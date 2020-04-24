@@ -12,11 +12,13 @@ import utilities
 import numpy
 from matplotlib import pylab as pl
 
+TEST_DATA_PATH = "/home/colin/code/mtools/test_data/"
+
 logger = utilities.get_logger('test_Product', verbose=True)
 
 ### TESTING Generic products
 
-generic_product = Product.Product("test_data/VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
+generic_product = Product.Product(TEST_DATA_PATH + "VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
 
 def test_product_name():
     logger.info("test_product_name")
@@ -28,7 +30,7 @@ def test_product_type():
 
 ### TESTING Venus product
 
-venus_product = Product.Venus_product("test_data/VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
+venus_product = Product.Venus_product(TEST_DATA_PATH + "VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
 
 def test_venus_product_name():
     logger.info("test_venus_product_name")
@@ -51,7 +53,7 @@ def test_get_venus_mask_asarray():
 
 ### TESTING Directory based product (actually acix maja)
 
-dir_product = Product.Product("test_data/acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0", logger)
+dir_product = Product.Product(TEST_DATA_PATH + "acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0", logger)
 
 def test_dir_product_type():
     logger.info("test_dir_product_type")
@@ -64,7 +66,7 @@ def test_dir_content_list():
 def test_get_band_filename_from_dir():
     logger.info("test_get_band_filename_from_dir")
     fname = dir_product.find_band("SRE_B4.")
-    assert fname == "test_data/acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0_SRE_B4.tif"
+    assert fname == TEST_DATA_PATH + "acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0_SRE_B4.tif"
 
 def test_get_band_dir_asarray_type():
     logger.info("test_get_band_dir_asarray_type")
@@ -79,7 +81,7 @@ def test_get_band_dir_asarray_value():
 
 ### TESTING HDF Vermote product
 
-hdf_product = Product.Acix_vermote_product("test_data/vermote_carpentras/refsrs2-L1C_T31TFJ_A003037_20171005T104550-Carpentras.hdf", logger)
+hdf_product = Product.Acix_vermote_product(TEST_DATA_PATH + "vermote_carpentras/refsrs2-L1C_T31TFJ_A003037_20171005T104550-Carpentras.hdf", logger)
 
 def test_hdf_product_type():
     logger.info("test_hdf_product_type")

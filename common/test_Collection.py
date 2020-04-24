@@ -10,11 +10,14 @@ __version__ = "0.1.0"
 import Collection
 import utilities
 
+TEST_DATA_PATH = "/home/colin/code/mtools/test_data/"
+
+
 logger = utilities.get_logger('test_Collection', verbose=True)
 
-venus_collection = Collection.Collection("test_data/venus_collection/", logger)
-acix_maja_collection = Collection.Collection("test_data/acix_carpentras/", logger)
-acix_vermote_collection = Collection.Collection("test_data/vermote_carpentras/", logger)
+venus_collection = Collection.Collection(TEST_DATA_PATH + "venus_collection/", logger)
+acix_maja_collection = Collection.Collection(TEST_DATA_PATH + "acix_carpentras/", logger)
+acix_vermote_collection = Collection.Collection(TEST_DATA_PATH + "vermote_carpentras/", logger)
 
 
 def test_discover():

@@ -166,17 +166,3 @@ class Roi:
         logger.debug("mask_NaNsum=%i, dummy_NaNsum=%i" % (np.nansum(mask), np.nansum(dummy)))
 
         return dummy
-
-
-    def get_stacked_asarray(self, product, logger):
-        pass
-        # TODO: this
-
-        # bands = product.band_names
-        #
-        # for band in bands:
-        #     subset = self.cut_band(product, band, logger)
-        #     samples, minmax, avg, variance, skewness, kurtosis = stats.describe(subset, axis=None)
-        #     print(
-        #         "ROI id %s, band %s, samples=%i, min=%6.4f, max=%6.4f, avg=%6.4f, variance=%6.4f, skewness=%6.4f, kurtosis=%6.4f" %
-        #         (self.id, band, samples, minmax[0], minmax[1], avg, variance, skewness, kurtosis))
