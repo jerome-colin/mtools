@@ -35,6 +35,10 @@ class Roi_collection:
         try:
             self.coord_arr = np.loadtxt(self.fname, delimiter=self.delimiter)
             self.logger.info("Found %i coordinates pairs" % (len(self.coord_arr)))
+            if len(self.coord_arr) == 0:
+                self.logger.error("Coordinates file empty ?")
+                sys.exit(2)
+
             for c in range(len(self.coord_arr)):
                 self.logger.debug(self.coord_arr[c])
 

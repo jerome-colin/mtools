@@ -30,7 +30,7 @@ def get_logger(name, verbose=False):
     return logger
 
 
-def make_quicklook_rgb(r, g, b, logger, outfile="quicklook.png"):
+def make_quicklook_rgb(r, g, b, logger, vmax=0.5, outfile="quicklook.png"):
     """
     Generate a quicklook as PNG
     :param r: band name (should match string name in filename)
@@ -40,20 +40,25 @@ def make_quicklook_rgb(r, g, b, logger, outfile="quicklook.png"):
     :param outfile:
     :return: void
     """
-    logger.info("Generating quicklook...")
-    red_band = _convert_band_uint8(r, vmax=300)
-    green_band = _convert_band_uint8(g, vmax=300)
-    blue_band = _convert_band_uint8(b, vmax=300)
+    try:
+        logger.info("Generating quicklook...")
+        red_band = _convert_band_uint8(r, vmax=vmax)
+        green_band = _convert_band_uint8(g, vmax=vmax)
+        blue_band = _convert_band_uint8(b, vmax=vmax)
 
-    array_stack = np.dstack((red_band, green_band, blue_band))
-    img = pillow.fromarray(array_stack)
-    if outfile[-4:] != ".png":
-        outfile += ".png"
+        array_stack = np.dstack((red_band, green_band, blue_band))
+        img = pillow.fromarray(array_stack)
+        if outfile[-4:] != ".png":
+            outfile += ".png"
 
-    img.save(outfile)
+        img.save(outfile)
+        return 0
+
+    except:
+        return 1
 
 
-def _convert_band_uint8(band, vmax=None):
+def _convert_band_uint8(band, vmin=0, vmax=None):
     """Convert a band array to unint8
     :return: an unint8 numpy array
     """
@@ -62,9 +67,11 @@ def _convert_band_uint8(band, vmax=None):
     else:
         b_max = vmax
 
+    clipped_band = np.clip(band,vmin,b_max)
+
     if b_max > 0:
-        img = band / b_max * 256
+        img = clipped_band / b_max * 256
     else:
-        img = band * 0
+        img = clipped_band * 0
 
     return img.astype(np.uint8)
