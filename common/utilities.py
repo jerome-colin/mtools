@@ -1,3 +1,12 @@
+"""
+Utilities for mtools
+
+"""
+
+__author__ = "Jerome Colin"
+__license__ = "MIT"
+__version__ = "0.1.0"
+
 import logging
 import os
 import numpy as np
@@ -58,6 +67,18 @@ def make_quicklook_rgb(r, g, b, logger, vmax=0.5, outfile="quicklook.png"):
         return 1
 
 
+def is_valid(band, mask):
+    """
+    Return a vector of pixels from the array 'band' that match 'mask'=1
+    :param band:
+    :param mask:
+    :return: a numpy vector
+    """
+    search = np.where(mask == 1)
+    valid_pixels = band[search]
+    return valid_pixels
+
+
 def _convert_band_uint8(band, vmin=0, vmax=None):
     """Convert a band array to unint8
     :return: an unint8 numpy array
@@ -67,7 +88,7 @@ def _convert_band_uint8(band, vmin=0, vmax=None):
     else:
         b_max = vmax
 
-    clipped_band = np.clip(band,vmin,b_max)
+    clipped_band = np.clip(band, vmin, b_max)
 
     if b_max > 0:
         img = clipped_band / b_max * 256
@@ -75,3 +96,22 @@ def _convert_band_uint8(band, vmin=0, vmax=None):
         img = clipped_band * 0
 
     return img.astype(np.uint8)
+
+
+def rmse(v1, v2):
+    """
+    Return RMSE between two vectors of same length
+    :param v1: numpy vector
+    :param v2: numpy vector
+    :return: float rmse
+    """
+    return np.sqrt(np.nanmean((v1 - v2) ** 2))
+
+
+def write_list_to_file(guest_list, filename):
+    """Write the list to csv file."""
+
+    with open(filename, "w") as outfile:
+        for entries in guest_list:
+            outfile.write(str(entries))
+            outfile.write("\n")

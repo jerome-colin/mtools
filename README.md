@@ -1,3 +1,74 @@
+# MTOOLS
+####A collection of classes to:
+* retrieve surface reflectance products (Maja S2, Maja Venus zip, HDF) as numpy array, accounting for cloud and edge masks;
+* compute statistics from products, collection of products, or from comparison between two collections.
+
+#### Testing coverage (with pytest):
+
+```
+----------- coverage: platform linux, python 3.7.7-final-0 -----------
+Name                        Stmts   Miss  Cover'
+-----------------------------------------------
+common/Collection.py           63      4    94%
+common/Comparison.py           55      0   100%
+common/Product.py             147     16    89%
+common/Roi.py                  70      8    89%
+common/test_Collection.py      18      0   100%
+common/test_Comparison.py      23      0   100%
+common/test_Product.py         96      0   100%
+common/test_Roi.py            124      0   100%
+common/utilities.py            56      7    88%
+-----------------------------------------------
+TOTAL                         652     35    95%
+
+```
+
+#### Venv files: 
+* requirement.txt (pip)
+* mtools.yml (conda)
+
+## Product
+
+#### Product.Product
+Generic class with the following methods:
+* get_content_list(): retreive the content of a product
+* find_band(string): get the filename from a <string> pattern
+* get_band(band, \[scalef\]): get a band as numpy array, optionaly apply scale factor
+* get_band_subset(band, roi=None, ulx=None, uly=None, lrx=None, lry=None, scalef=None): get a subset of band by passing either an Roi object of coordinates, optionaly with scale factor
+
+#### Product.Product_zip
+Extends Product for zipped files. 
+
+#### Product.Product_zip_venus
+Extends Product.Product_zip with venus specific methods and attributes.
+
+#### Product.Product_dir_maja
+Extends Product with Maja S2 specific methods and attributes.
+
+#### Product.Product_hdf
+Extends Product for HDF files.
+
+#### Product.Product_hdf_acix
+Extends Product.Product_hdf with ACIX reference S2 specific methods and attributes.
+
+## Roi
+
+#### Roi.Roi_collection
+A class to create a collection of ROI from pairs of coordinates described in a csv file and an extent.
+
+#### Roi.Roi
+An Roi class that can be passed to Product.get_band_subset()
+
+## Collection
+Automatically finds any products in a given path. Useful for comparing time series of products from different sources/algorithms.
+
+## Comparison
+#### Comparison.Comparison
+Provides facilities to find matching by date between two collections of products, and compute statistics for each band of each product of both collections. Create subclasses of Comparison for various scenarii.
+
+#### Comparison.Comparison_acix
+Extends Comparison.Comparison with specific methods for ACIX.
+
 # ROISTATS
 
 Lightweight utility to compute band statistics from zipped Venus products over user defined Regions of Interest.
@@ -35,7 +106,3 @@ Optional arguments:
 Dependency list provided as yaml conda environment file in:
 
 `mtools.yml`
-
-# MTOOLS
-
-Generic classes for product and ROI definitions can be found in 'common'
