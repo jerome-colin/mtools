@@ -31,7 +31,7 @@ def main():
     logger = utl.get_logger('roistats', args.verbose)
 
     # Create a Venus product object
-    vns_product = common.Product.Venus_product(args.product, logger)
+    vns_product = common.Product.Product_zip_venus(args.product, logger)
 
     # Create an roi collection
     roi_collection = common.Roi.Roi_collection(args.coordinates, args.extent, logger)
