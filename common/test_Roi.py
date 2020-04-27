@@ -82,10 +82,10 @@ def test_Roi_xy_type():
 
 
 logger.info("TESTING Control pixel values for a subset of 2x2 pixels in band 4")
-p_venus = Product.Venus_product(TEST_DATA_PATH + "VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
+p_venus = Product.Product_zip_venus(TEST_DATA_PATH + "VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
 r_2x2 = Roi.Roi([22, 649460, 4238440], 10, logger)
 
-p_venus_b4_subset = r_2x2.cut_band(p_venus, "SRE_B4.", logger)
+p_venus_b4_subset = p_venus.get_band_subset(p_venus.find_band("SRE_B4."), roi=r_2x2, scalef=p_venus.sre_scalef)
 
 
 def test_venus_subset_nocloud_type():

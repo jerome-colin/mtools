@@ -74,14 +74,15 @@ class Roi_collection:
         for i in range(len(self.coord_arr)):
             # Get an ROI object
             roi_n = Roi(self.coord_arr[i], self.extent, logger)
-            mask = roi_n.get_mask(product, logger)
+            # Get the corresponding mask
+            clm = product.get_band_subset(product.find_band(product.clm_name), roi=roi_n)
+            edg = product.get_band_subset(product.find_band(product.edg_name), roi=roi_n)
+            mask = product.get_mask(clm, edg)
 
             # For each band in product, extract a subset according to ROI and return stats
             for band in bands:
                 # samples, minmax, avg, variance, skewness, kurtosis
-
                 band_size = mask.size
-
                 stats = self.compute_stats_oneband(roi_n, product, band, mask=mask)
                 list_stats.append(stats)
                 if stdout:
@@ -101,10 +102,12 @@ class Roi_collection:
         :param band: a string that helps identify a file
         :return:
         """
-        subset = roi.cut_band(product, band, self.logger)
+        subset = product.get_band_subset(product.find_band(band), roi=roi, scalef=product.sre_scalef)
         if mask is not None:
             search = np.where(mask == 1)
             valid_pixels = subset[search]
+        else:
+            valid_pixels = subset
 
         try:
             return stats.describe(valid_pixels, axis=None)
@@ -160,6 +163,7 @@ class Roi:
             uly=self.uly, lrx=self.lrx, lry=self.lry)
 
     def get_mask(self, product, logger):
+        # DEPRECATED
         # Get once the clm if any
         clm = self.cut_mask(product, product.clm_name, logger)
         edg = self.cut_mask(product, product.edg_name, logger)

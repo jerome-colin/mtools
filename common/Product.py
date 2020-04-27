@@ -156,6 +156,20 @@ class Product:
         img = self._get_band(fband)
         return img.ReadAsArray()
 
+    def get_mask(self, clm, edg):
+        # Get once the clm if any
+        clm = clm
+        edg = edg
+        mask = clm + edg
+
+        dummy = np.zeros_like(clm) + 1
+        search = np.where(mask != 0)
+        dummy[search] = 0
+
+        self.logger.debug("mask_NaNsum=%i, dummy_NaNsum=%i" % (np.nansum(mask), np.nansum(dummy)))
+
+        return dummy
+
 class Product_zip(Product):
     """
     Product subclass for zip
