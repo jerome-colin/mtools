@@ -33,4 +33,5 @@ def test_Comparison_acix():
     acix_vermote_collection = Collection.Collection(TEST_DATA_PATH + "vermote_carpentras/", logger)
 
     compare = Comparison.Comparison_acix(acix_vermote_collection, acix_maja_collection, logger)
-    compare.one_by_one()
+    res = compare.one_by_one(save_csv="test_acix.csv")
+    assert type(res) is list

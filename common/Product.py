@@ -131,7 +131,7 @@ class Product:
     def get_content_list(self):
         self.content_list = glob.glob(self.path + '/*')
 
-    def get_mask(self, clm, edg):
+    def get_mask(self, clm, edg, stats=False):
         # Get once the clm if any
         clm = clm
         edg = edg
@@ -141,11 +141,16 @@ class Product:
         search = np.where(mask != 0)
         dummy[search] = 0
 
-        self.logger.debug("mask_NaNsum=%i, dummy_NaNsum=%i" % (np.nansum(mask), np.nansum(dummy)))
+        validity_ratio = np.nansum(dummy) / np.size(clm) * 100
 
-        return dummy
+        self.logger.debug("Product.get_mask NaNsums: clm=%i, edg=%i, mask=%i, result=%i, ratio=%4.2f%%" %
+                          (np.nansum(clm), np.nansum(edg), np.nansum(mask), np.nansum(dummy),
+                           validity_ratio))
 
-
+        if stats:
+            return dummy, validity_ratio
+        else:
+            return dummy
 
 
 class Product_dir_maja(Product):
@@ -229,9 +234,11 @@ class Product_hdf_acix(Product_hdf):
     """
     Subclass of Product_hdf for ACIX reference products
     """
+
     def __init__(self, path, logger):
         super().__init__(path, logger)
         self.sre_scalef = 10000
+
 
 class Product_zip(Product):
     """
