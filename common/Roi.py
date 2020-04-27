@@ -135,6 +135,7 @@ class Roi:
 
     def cut_band(self, product, band, logger):
         """
+        DEPRECATED
         Returns a numpy array of a given band of a given product cut to fit the ROI
         :param product: a Product instance
         :param band: a string that helps identify a file
@@ -147,6 +148,7 @@ class Roi:
 
     def cut_mask(self, product, band, logger):
         """
+        DEPRECATED
         Returns a numpy array of a given band of a given product cut to fit the ROI
         :param product: a Product instance
         :param band: a string that helps identify a file in the zipped Product

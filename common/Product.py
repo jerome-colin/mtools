@@ -32,6 +32,7 @@ class Product:
         # fband_name = [b for b in self.zip_content_list if band in b]
 
         # Consistency check
+        # TODO: move this test to Collection and use subclasses
         try:
             if zipfile.is_zipfile(self.path):
                 logger.info("ZIP file found")
@@ -58,6 +59,7 @@ class Product:
 
     def get_content_list(self):
         if self.ptype == "ZIP":
+            #DEPRECATED
             self._get_zip_content_list()
             self.name = self.path.split('/')[-1]
 
@@ -79,6 +81,7 @@ class Product:
 
     def _get_zip_content_list(self):
         """
+        DEPRECATED
         Creates a zip_content_list attribute with the list of files in a zip archive
         :return:
         """
@@ -98,6 +101,7 @@ class Product:
             sys.exit(2)
 
     def _get_zipped_band_subset_asarray(self, fband, logger, ulx, uly, lrx, lry):
+        #DEPRECATED
         """Extract a Gdal object from an image file, optionally a subset from coordinates
         :param fband: product image file
         :param logger: logging object
@@ -134,6 +138,7 @@ class Product:
         :return: gdal object
         """
         if self.ptype == "ZIP":
+            #DEPRECATED
             self.logger.debug('Gdal.Open using /vsizip/%s/%s' % (self.path, fband))
             return gdal.Open('/vsizip/%s/%s' % (self.path, fband))
 
@@ -142,12 +147,112 @@ class Product:
             return gdal.Open('%s' % (fband))
 
     def get_band_asarray(self, fband):
+        #DEPRECATED
         img = self._get_band(fband)
         return img.ReadAsArray() / self.sre_scalef
 
     def get_mask_asarray(self, fband):
+        #DEPRECATED
         img = self._get_band(fband)
         return img.ReadAsArray()
+
+class Product_zip(Product):
+    """
+    Product subclass for zip
+    """
+    def __init__(self, path, logger):
+        super().__init__(path, logger)
+
+    def get_content_list(self):
+        """
+
+        :return: a list of files within a zip
+        """
+        self.name = self.path.split('/')[-1]
+        with zipfile.ZipFile(self.path, 'r') as zip:
+            self.content_list = zip.namelist()
+            self.logger.info("Looking into ZIP file content")
+            for element in self.content_list:
+                self.logger.debug(element)
+
+    def get_band(self, band, scalef = None):
+        """
+
+        :param band: must be a filename within a zip, from content_list
+        :return: a Gdal object
+        """
+        self.logger.debug('Gdal.Open using /vsizip/%s/%s' % (self.path, band))
+        if scalef is not None:
+            return gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray() / scalef
+        else:
+            return gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray()
+
+    def get_band_subset(self, band, roi=None, ulx=None, uly=None, lrx=None, lry=None, scalef = None):
+        """Extract a subset from an image file
+        :param band: product image filename from content_list
+        :param ulx: upper left x
+        :param uly: upper left y
+        :param lrx: lower right x
+        :param lry: lower right y
+        :return: a Gdal object
+        """
+        if roi is not None:
+            ulx = roi.ulx
+            uly = roi.uly
+            lrx = roi.lrx
+            lry = roi.lry
+        else:
+            ulx = ulx
+            uly = uly
+            lrx = lrx
+            lry = lry
+
+        try:
+            translate = 'gdal_translate -projwin %s %s %s %s /vsizip/%s/%s %s' % (
+                ulx, uly, lrx, lry, self.path, band, ".tmp.tif")
+            self.logger.debug(translate)
+            args = shlex.split(translate)
+            prog = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = prog.communicate()
+            self.logger.debug('Gdal_translate stdout: %s' % out)
+            self.logger.debug('Gdal_translate stderr: %s' % err)
+            img = gdal.Open(".tmp.tif")
+            os.remove(".tmp.tif")
+
+        except RuntimeError as err:
+            self.logger.error('ERROR: Unable to open ' + band)
+            self.logger.error(err)
+            sys.exit(1)
+
+        if scalef is not None:
+            return img.ReadAsArray() / scalef
+        else:
+            return img.ReadAsArray()
+
+
+class Product_zip_venus(Product_zip):
+    """
+    Sub-class of Product_zip for Venus specific methods
+    """
+
+    def __init__(self, path, logger):
+        super().__init__(path, logger)
+        self.band_names = ["SRE_B1.",
+                           "SRE_B2.",
+                           "SRE_B3.",
+                           "SRE_B4.",
+                           "SRE_B5.",
+                           "SRE_B6.",
+                           "SRE_B7.",
+                           "SRE_B8.",
+                           "SRE_B9.",
+                           "SRE_B10.",
+                           "SRE_B11.",
+                           "SRE_B12.", ]
+
+        self.sre_scalef = 1000
+        self.clm_name = "CLM_XS"
+        self.edg_name = "EDG_XS"
 
 class Acix_maja_product(Product):
     """
@@ -175,7 +280,7 @@ class Acix_maja_product(Product):
         self.edg_name = "EDG_R1"
 
 
-class Acix_vermote_product(Product):
+class Product_hdf(Product):
     """
     Sub-class of Product for Venus specific methods
     """
@@ -207,17 +312,24 @@ class Acix_vermote_product(Product):
         if is_unique == 1:
             return subds_id
 
-    def get_band_asarray(self, fband):
+    def get_band(self, fband, scalef = None):
         """
         Overriding mother class method
         :param fband:
         :return:
         """
-        return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray().astype(np.int16)
+        if scalef is not None:
+            return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray() / scalef
+        else:
+            return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray().astype(np.int16)
+
+    def get_band_subset(self):
+        self.logger.warning("Product_hdf.get_band_subset not yet implemented !")
 
 
 class Venus_product(Product):
     """
+    DEPRECATED
     Sub-class of Product for Venus specific methods
     """
 
