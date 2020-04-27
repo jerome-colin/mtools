@@ -99,6 +99,16 @@ def test_product_hdf():
     assert p_hdf_vermote.get_band(p_hdf_vermote.find_band("band04-red"))[0][0] == 596
     assert p_hdf_vermote.get_band(p_hdf_vermote.find_band("band04-red"))[6][2] == 1096
 
+def test_product_hdf_acix():
+    p_hdf_acix = Product.Product_hdf_acix(TEST_DATA_PATH + "vermote_carpentras/refsrs2-L1C_T31TFJ_A012260_20171027T103128-Carpentras.hdf", logger)
+    assert p_hdf_acix.sre_scalef == 10000
+    b7 = p_hdf_acix.get_band(p_hdf_acix.find_band("band07"), scalef=p_hdf_acix.sre_scalef)
+    assert type(b7) is numpy.ndarray
+    assert b7[12,5] == 0.1829
+    assert b7[899,899] == 0.2021
+
+
+
 ## TESTING PRODUCT_DIR_MAJA
 def test_product_dir_maja():
     logger.info("TESTING PRODUCT_DIR_MAJA")

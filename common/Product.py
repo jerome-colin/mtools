@@ -146,25 +146,6 @@ class Product:
         return dummy
 
 
-class Product_zip(Product):
-    """
-    Product subclass for zip
-    """
-
-    def __init__(self, path, logger):
-        super().__init__(path, logger)
-
-    def get_content_list(self):
-        """
-
-        :return: a list of files within a zip
-        """
-        self.name = self.path.split('/')[-1]
-        with zipfile.ZipFile(self.path, 'r') as zip:
-            self.content_list = zip.namelist()
-            self.logger.info("Looking into ZIP file content")
-            for element in self.content_list:
-                self.logger.debug(element)
 
 
 class Product_dir_maja(Product):
@@ -242,6 +223,35 @@ class Product_hdf(Product):
     def get_content_list(self):
         hdf_ds = gdal.Open(self.path, gdal.GA_ReadOnly)
         self.content_list = hdf_ds.GetSubDatasets()
+
+
+class Product_hdf_acix(Product_hdf):
+    """
+    Subclass of Product_hdf for ACIX reference products
+    """
+    def __init__(self, path, logger):
+        super().__init__(path, logger)
+        self.sre_scalef = 10000
+
+class Product_zip(Product):
+    """
+    Product subclass for zip
+    """
+
+    def __init__(self, path, logger):
+        super().__init__(path, logger)
+
+    def get_content_list(self):
+        """
+
+        :return: a list of files within a zip
+        """
+        self.name = self.path.split('/')[-1]
+        with zipfile.ZipFile(self.path, 'r') as zip:
+            self.content_list = zip.namelist()
+            self.logger.info("Looking into ZIP file content")
+            for element in self.content_list:
+                self.logger.debug(element)
 
 
 class Product_zip_venus(Product_zip):
