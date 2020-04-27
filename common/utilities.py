@@ -58,6 +58,12 @@ def make_quicklook_rgb(r, g, b, logger, vmax=0.5, outfile="quicklook.png"):
         return 1
 
 
+def is_valid(band, mask):
+    search = np.where(mask == 1)
+    valid_pixels = band[search]
+    return valid_pixels
+
+
 def _convert_band_uint8(band, vmin=0, vmax=None):
     """Convert a band array to unint8
     :return: an unint8 numpy array
@@ -75,3 +81,12 @@ def _convert_band_uint8(band, vmin=0, vmax=None):
         img = clipped_band * 0
 
     return img.astype(np.uint8)
+
+def rmse(v1, v2):
+    """
+    Return RMSE between two vectors of same length
+    :param v1: numpy vector
+    :param v2: numpy vector
+    :return: float rmse
+    """
+    return np.sqrt(np.nanmean((v1 - v2) ** 2))
