@@ -82,10 +82,10 @@ def test_Roi_xy_type():
 
 
 logger.info("TESTING Control pixel values for a subset of 2x2 pixels in band 4")
-p_venus = Product.Venus_product(TEST_DATA_PATH + "VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
+p_venus = Product.Product_zip_venus(TEST_DATA_PATH + "VENUS-XS_20200402-191352-000_L2A_GALLOP30_D.zip", logger)
 r_2x2 = Roi.Roi([22, 649460, 4238440], 10, logger)
 
-p_venus_b4_subset = r_2x2.cut_band(p_venus, "SRE_B4.", logger)
+p_venus_b4_subset = p_venus.get_band_subset(p_venus.find_band("SRE_B4."), roi=r_2x2, scalef=p_venus.sre_scalef)
 
 
 def test_venus_subset_nocloud_type():
@@ -107,19 +107,22 @@ logger.info("TESTING Partly cloudy ROI")
 def test_clm_partly_cloudy_values():
     logger.info("test_clm_partly_cloudy_values")
     r_partly_cloudy = Roi.Roi([33, 678644, 4246106], 150, logger)
-    clm = r_partly_cloudy.get_mask(p_venus, logger)
-    assert type(clm) is numpy.ndarray
-    assert numpy.min(clm) == 0
-    assert numpy.max(clm) == 1
-    assert numpy.sum(clm) == 518
+    clm = p_venus.get_band_subset(p_venus.find_band(p_venus.clm_name), roi=r_partly_cloudy)
+    edg = p_venus.get_band_subset(p_venus.find_band(p_venus.edg_name), roi=r_partly_cloudy)
+    mask = p_venus.get_mask(clm, edg)
+    assert type(mask) is numpy.ndarray
+    assert numpy.min(mask) == 0
+    assert numpy.max(mask) == 1
+    assert numpy.sum(mask) == 518
 
 
 def test_roi_quicklook_partly():
     logger.info("test_roi_quicklook_partly")
     r_partly_cloudy = Roi.Roi([33, 678644, 4246106], 500, logger)
-    b = r_partly_cloudy.cut_band(p_venus, "SRE_B3.", logger)
-    g = r_partly_cloudy.cut_band(p_venus, "SRE_B4.", logger)
-    r = r_partly_cloudy.cut_band(p_venus, "SRE_B7.", logger)
+    b = p_venus.get_band_subset(p_venus.find_band("SRE_B3."), roi=r_partly_cloudy, scalef=p_venus.sre_scalef)
+    g = p_venus.get_band_subset(p_venus.find_band("SRE_B4."), roi=r_partly_cloudy, scalef=p_venus.sre_scalef)
+    r = p_venus.get_band_subset(p_venus.find_band("SRE_B7."), roi=r_partly_cloudy, scalef=p_venus.sre_scalef)
+
     assert type(b) is numpy.ndarray
     assert type(g) is numpy.ndarray
     assert type(r) is numpy.ndarray
@@ -130,9 +133,9 @@ def test_roi_quicklook_partly():
 def test_roi_quicklook_clear():
     logger.info("test_roi_quicklook_clear")
     r_clear = Roi.Roi([22, 649460, 4238440], 500, logger)
-    b = r_clear.cut_band(p_venus, "SRE_B3.", logger)
-    g = r_clear.cut_band(p_venus, "SRE_B4.", logger)
-    r = r_clear.cut_band(p_venus, "SRE_B7.", logger)
+    b = p_venus.get_band_subset(p_venus.find_band("SRE_B3."), roi=r_clear, scalef=p_venus.sre_scalef)
+    g = p_venus.get_band_subset(p_venus.find_band("SRE_B4."), roi=r_clear, scalef=p_venus.sre_scalef)
+    r = p_venus.get_band_subset(p_venus.find_band("SRE_B7."), roi=r_clear, scalef=p_venus.sre_scalef)
     assert type(b) is numpy.ndarray
     assert type(g) is numpy.ndarray
     assert type(r) is numpy.ndarray
@@ -140,31 +143,29 @@ def test_roi_quicklook_clear():
     assert is_quicklook == 0
 
 
-logger.info("TESTING Fully cloudy ROI")
-r_fully_cloudy = Roi.Roi([44, 679016, 4245740], 100, logger)
-p_venus_b4_fully_cloudy_subset = r_fully_cloudy.cut_band(p_venus, "SRE_B4.", logger)
-p_venus_cml_fully_cloudy_subset = r_fully_cloudy.cut_mask(p_venus, "CLM_XS", logger)
+def test_roi_fully_cloudy():
+    logger.info("TESTING Fully cloudy ROI")
+    r_fully_cloudy = Roi.Roi([44, 679016, 4245740], 100, logger)
+    p_venus_b4_fully_cloudy_subset = p_venus.get_band_subset(p_venus.find_band("SRE_B4."), roi=r_fully_cloudy,
+                                                             scalef=p_venus.sre_scalef)
+    p_venus_cml_fully_cloudy_subset = p_venus.get_band_subset(p_venus.find_band("CLM_XS"), roi=r_fully_cloudy)
 
-
-def test_clm_fully_cloudy_type():
     logger.info("test_clm_fully_cloudy_type")
     assert type(p_venus_cml_fully_cloudy_subset) is numpy.ndarray
 
-
-def test_clm_fully_cloudy_values():
     logger.info("test_clm_fully_cloudy_values")
-    clm = r_fully_cloudy.get_mask(p_venus, logger)
-    assert type(clm) is numpy.ndarray
-    assert numpy.min(clm) == 0
-    assert numpy.max(clm) == 0
-
-
-logger.info("TESTING Statistics for Roi_collection.compute_stats_all_bands")
-collection_10m = Roi.Roi_collection(TEST_DATA_PATH + "demo.csv", 10, logger)
-list_stats = collection_10m.compute_stats_all_bands(p_venus, logger)
+    clm = p_venus.get_band_subset(p_venus.find_band(p_venus.clm_name), roi=r_fully_cloudy)
+    edg = p_venus.get_band_subset(p_venus.find_band(p_venus.edg_name), roi=r_fully_cloudy)
+    mask = p_venus.get_mask(clm, edg)
+    assert type(mask) is numpy.ndarray
+    assert numpy.min(mask) == 0
+    assert numpy.max(mask) == 0
 
 
 def test_Roi_collection_compute_stats_all_bands():
+    logger.info("TESTING Statistics for Roi_collection.compute_stats_all_bands")
+    collection_10m = Roi.Roi_collection(TEST_DATA_PATH + "demo.csv", 10, logger)
+    list_stats = collection_10m.compute_stats_all_bands(p_venus, logger)
     logger.info("test_Roi_collection_compute_stats_all_bands")
     assert list_stats[15][0] == 4
     assert list_stats[15][1][0] == 0.086

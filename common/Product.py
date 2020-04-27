@@ -11,7 +11,6 @@ import zipfile
 import sys
 import os
 import subprocess, shlex
-from xml.dom import minidom
 import osgeo.gdal as gdal
 import glob
 import numpy as np
@@ -29,9 +28,8 @@ class Product:
         self.logger = logger
         self.sre_scalef = 1.
 
-        # fband_name = [b for b in self.zip_content_list if band in b]
-
         # Consistency check
+        # TODO: move this test to Collection and use subclasses
         try:
             if zipfile.is_zipfile(self.path):
                 logger.info("ZIP file found")
@@ -56,38 +54,6 @@ class Product:
 
         self.get_content_list()
 
-    def get_content_list(self):
-        if self.ptype == "ZIP":
-            self._get_zip_content_list()
-            self.name = self.path.split('/')[-1]
-
-        elif self.ptype == "DIR":
-            self._get_dir_content_list()
-
-        elif self.ptype == "HDF":
-            self._get_hdf_content_list()
-
-        else:
-            self.logger.warning("Not yet implemented")
-
-    def _get_dir_content_list(self):
-        self.content_list = glob.glob(self.path + '/*')
-
-    def _get_hdf_content_list(self):
-        hdf_ds = gdal.Open(self.path, gdal.GA_ReadOnly)
-        self.content_list = hdf_ds.GetSubDatasets()
-
-    def _get_zip_content_list(self):
-        """
-        Creates a zip_content_list attribute with the list of files in a zip archive
-        :return:
-        """
-        with zipfile.ZipFile(self.path, 'r') as zip:
-            self.content_list = zip.namelist()
-            self.logger.info("Looking into ZIP file content")
-            for element in self.content_list:
-                self.logger.debug(element)
-
     def find_band(self, band):
         fband_name = [b for b in self.content_list if band in b]
         if len(fband_name) == 1:
@@ -97,61 +63,113 @@ class Product:
             self.logger.error("No match found for band name %s" % band)
             sys.exit(2)
 
-    def _get_zipped_band_subset_asarray(self, fband, logger, ulx, uly, lrx, lry):
-        """Extract a Gdal object from an image file, optionally a subset from coordinates
-        :param fband: product image file
-        :param logger: logging object
-        :param ulx: upper left x
-        :param uly: upper left y
-        :param lrx: lower right x
-        :param lry: lower right y
-        :return: a numpy array
-        """
-
-        try:
-            translate = 'gdal_translate -projwin %s %s %s %s /vsizip/%s/%s %s' % (
-                ulx, uly, lrx, lry, self.path, fband, ".tmp.tif")
-            logger.debug(translate)
-            args = shlex.split(translate)
-            prog = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
-            out, err = prog.communicate()
-            logger.debug('Gdal_translate stdout: %s' % out)
-            logger.debug('Gdal_translate stderr: %s' % err)
-            img = gdal.Open(".tmp.tif")
-            os.remove(".tmp.tif")
-
-        except RuntimeError as err:
-            logger.error('ERROR: Unable to open ' + fband)
-            logger.error(err)
-            sys.exit(1)
-
-        return img.ReadAsArray()
-
-    def _get_band(self, fband):
+    def get_band(self, band, scalef=None):
         """
         Return a gdal object from an image in a zip archive
         :param fband:
         :return: gdal object
         """
+        self.logger.debug('Gdal.Open using %s' % (band))
+        if self.ptype == "DIR":
+            if scalef is not None:
+                return gdal.Open('%s' % (band)).ReadAsArray() / scalef
+            else:
+                return gdal.Open('%s' % (band)).ReadAsArray()
         if self.ptype == "ZIP":
-            self.logger.debug('Gdal.Open using /vsizip/%s/%s' % (self.path, fband))
-            return gdal.Open('/vsizip/%s/%s' % (self.path, fband))
+            if scalef is not None:
+                return gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray() / scalef
+            else:
+                return gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray()
 
-        elif self.ptype == "DIR":
-            self.logger.debug('Gdal.Open using %s' % (fband))
-            return gdal.Open('%s' % (fband))
+    def get_band_subset(self, band, roi=None, ulx=None, uly=None, lrx=None, lry=None, scalef=None):
+        """Extract a subset from an image file
+        :param band: product image filename from content_list
+        :param ulx: upper left x
+        :param uly: upper left y
+        :param lrx: lower right x
+        :param lry: lower right y
+        :return: a Gdal object
+        """
+        if roi is not None:
+            ulx = roi.ulx
+            uly = roi.uly
+            lrx = roi.lrx
+            lry = roi.lry
+        else:
+            ulx = ulx
+            uly = uly
+            lrx = lrx
+            lry = lry
 
-    def get_band_asarray(self, fband):
-        img = self._get_band(fband)
-        return img.ReadAsArray() / self.sre_scalef
+        try:
+            if self.ptype == "ZIP":
+                translate = 'gdal_translate -projwin %s %s %s %s /vsizip/%s/%s %s' % (
+                    ulx, uly, lrx, lry, self.path, band, ".tmp.tif")
+            else:
+                translate = 'gdal_translate -projwin %s %s %s %s %s %s' % (
+                    ulx, uly, lrx, lry, band, ".tmp.tif")
 
-    def get_mask_asarray(self, fband):
-        img = self._get_band(fband)
-        return img.ReadAsArray()
+            self.logger.debug(translate)
+            args = shlex.split(translate)
+            prog = subprocess.Popen(args, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+            out, err = prog.communicate()
+            self.logger.debug('Gdal_translate stdout: %s' % out)
+            self.logger.debug('Gdal_translate stderr: %s' % err)
+            img = gdal.Open(".tmp.tif")
+            os.remove(".tmp.tif")
 
-class Acix_maja_product(Product):
+        except RuntimeError as err:
+            self.logger.error('ERROR: Unable to open ' + band)
+            self.logger.error(err)
+            sys.exit(1)
+
+        if scalef is not None:
+            return img.ReadAsArray() / scalef
+        else:
+            return img.ReadAsArray()
+
+    def get_content_list(self):
+        self.content_list = glob.glob(self.path + '/*')
+
+    def get_mask(self, clm, edg):
+        # Get once the clm if any
+        clm = clm
+        edg = edg
+        mask = clm + edg
+
+        dummy = np.zeros_like(clm) + 1
+        search = np.where(mask != 0)
+        dummy[search] = 0
+
+        self.logger.debug("mask_NaNsum=%i, dummy_NaNsum=%i" % (np.nansum(mask), np.nansum(dummy)))
+
+        return dummy
+
+
+class Product_zip(Product):
     """
-    Sub-class of Product for Venus specific methods
+    Product subclass for zip
+    """
+
+    def __init__(self, path, logger):
+        super().__init__(path, logger)
+
+    def get_content_list(self):
+        """
+
+        :return: a list of files within a zip
+        """
+        self.name = self.path.split('/')[-1]
+        with zipfile.ZipFile(self.path, 'r') as zip:
+            self.content_list = zip.namelist()
+            self.logger.info("Looking into ZIP file content")
+            for element in self.content_list:
+                self.logger.debug(element)
+
+
+class Product_dir_maja(Product):
+    """
+    Sub-class of Product for Maja specific methods
     """
 
     def __init__(self, path, logger):
@@ -175,9 +193,9 @@ class Acix_maja_product(Product):
         self.edg_name = "EDG_R1"
 
 
-class Acix_vermote_product(Product):
+class Product_hdf(Product):
     """
-    Sub-class of Product for Venus specific methods
+    Sub-class of Product for HDF specific methods
     """
 
     def __init__(self, path, logger):
@@ -207,18 +225,28 @@ class Acix_vermote_product(Product):
         if is_unique == 1:
             return subds_id
 
-    def get_band_asarray(self, fband):
+    def get_band(self, fband, scalef=None):
         """
         Overriding mother class method
         :param fband:
         :return:
         """
-        return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray().astype(np.int16)
+        if scalef is not None:
+            return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray() / scalef
+        else:
+            return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray().astype(np.int16)
+
+    def get_band_subset(self):
+        self.logger.warning("Product_hdf.get_band_subset not yet implemented !")
+
+    def get_content_list(self):
+        hdf_ds = gdal.Open(self.path, gdal.GA_ReadOnly)
+        self.content_list = hdf_ds.GetSubDatasets()
 
 
-class Venus_product(Product):
+class Product_zip_venus(Product_zip):
     """
-    Sub-class of Product for Venus specific methods
+    Sub-class of Product_zip for Venus specific methods
     """
 
     def __init__(self, path, logger):
@@ -239,20 +267,3 @@ class Venus_product(Product):
         self.sre_scalef = 1000
         self.clm_name = "CLM_XS"
         self.edg_name = "EDG_XS"
-
-    def parse_metadata(self):
-        """
-        TODO: adapt to zip files
-        :return:
-        """
-        fname = self.get_metadata_fname()
-        self.xml_meta = minidom.parse(fname)
-
-    def get_metadata_fname(self):
-        fmeta = [f for f in self.content_list if "MTD_ALL.xml" in f]
-        if len(fmeta) == 1:
-            self.logger.info("Found metadata file %s" % (fmeta[0]))
-            return fmeta[0]
-        else:
-            self.logger.error("No match found for metadata file")
-            sys.exit(2)
