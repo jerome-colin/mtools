@@ -33,8 +33,8 @@ TOTAL                         652     35    95%
 Generic class with the following methods:
 * get_content_list(): retreive the content of a product
 * find_band(string): get the filename from a <string> pattern
-* get_band(band, \[scalef\]): get a band as numpy array, optionaly apply scale factor
-* get_band_subset(band, roi=None, ulx=None, uly=None, lrx=None, lry=None, scalef=None): get a subset of band by passing either an Roi object of coordinates, optionaly with scale factor
+* get_band(band, \[scalef\]): get a band as numpy array, optionally apply scale factor
+* get_band_subset(band, roi=None, ulx=None, uly=None, lrx=None, lry=None, scalef=None): get a subset of band by passing either an Roi object of coordinates, optionally with scale factor
 
 #### Product.Product_zip
 Extends Product for zipped files. 
@@ -60,14 +60,16 @@ A class to create a collection of ROI from pairs of coordinates described in a c
 An Roi class that can be passed to Product.get_band_subset()
 
 ## Collection
-Automatically finds any products in a given path. Useful for comparing time series of products from different sources/algorithms.
+Automatically finds any products in a given path and create collection instances for Comparison.
 
 ## Comparison
 #### Comparison.Comparison
-Provides facilities to find matching by date between two collections of products, and compute statistics for each band of each product of both collections. Create subclasses of Comparison for various scenarii.
+Cornerstone class to compare two time series of products in collections. Provides facilities to find matching by date between two collections of products, and compute statistics for each band of each product of both collections. Create subclasses of Comparison for various scenarii.
 
 #### Comparison.Comparison_acix
 Extends Comparison.Comparison with specific methods for ACIX.
+* one_by_one(): output RMSE for valid pixels between each band of each products of two collections passed to Comparison. A valid pixel is within image boundaries (from edge mask) and cloud-free (from cloud mask);
+* flatten(): output one RMSE of the entire comparison. 
 
 # ROISTATS
 
