@@ -3,6 +3,10 @@
 * retrieve surface reflectance products (Maja S2, Maja Venus zip, HDF) as numpy array, accounting for cloud and edge masks;
 * compute statistics from products, collection of products, or from comparison between two collections.
 
+#### Status
+
+version 0.1.0 (not stable)
+
 #### Testing coverage (with pytest):
 
 ```
