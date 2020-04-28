@@ -14,6 +14,7 @@ import subprocess, shlex
 import osgeo.gdal as gdal
 import glob
 import numpy as np
+import utilities
 
 
 class Product:
@@ -131,20 +132,34 @@ class Product:
     def get_content_list(self):
         self.content_list = glob.glob(self.path + '/*')
 
-    def get_mask(self, clm, edg, stats=False):
-        # Get once the clm if any
+    def get_mask(self, clm, edg, stats=False, use_nodata=False):
+        """
+        Return a 'validity mask' such that valid pixel is 1, non-valid pixel is 0
+        :param clm: cloud mask numpy array
+        :param edg: edge mask numpy array
+        :param stats: return a fraction of valid pixels in percent
+        :param use_nodata: if True, NaN in masks are used instead of 0
+        :return: an array with 'valid' = 1, 'non-valid' = 0
+        """
+
+        # TODO: consider revising (numpy.ma ?)
         clm = clm
         edg = edg
-        mask = clm + edg
 
         dummy = np.zeros_like(clm) + 1
-        search = np.where(mask != 0)
-        dummy[search] = 0
+        self.logger.debug("Dummy size=%i, sum=%i" % (np.size(dummy), np.sum(dummy)))
+
+        if use_nodata:
+            dummy[~np.isnan(clm)] = 0
+            dummy[~np.isnan(edg)] = 0
+        else:
+            dummy[np.nonzero(clm)] = 0
+            dummy[np.nonzero(edg)] = 0
 
         validity_ratio = np.nansum(dummy) / np.size(clm) * 100
 
-        self.logger.debug("Product.get_mask NaNsums: clm=%i, edg=%i, mask=%i, result=%i, ratio=%4.2f%%" %
-                          (np.nansum(clm), np.nansum(edg), np.nansum(mask), np.nansum(dummy),
+        self.logger.debug("Product.get_mask: NaN in clm=%i, NaN in edg=%i, Non-zero in mask=%i, result=%i, ratio=%4.2f%%" %
+                          (utilities.count_nan(clm), utilities.count_nan(edg), np.count_nonzero(dummy), np.nansum(dummy),
                            validity_ratio))
 
         if stats:

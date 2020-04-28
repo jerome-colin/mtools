@@ -7,6 +7,7 @@ __author__ = "Jerome Colin"
 __license__ = "MIT"
 __version__ = "0.1.0"
 
+import pytest
 import Product
 import Roi
 import utilities
@@ -37,6 +38,42 @@ def test_product_dir():
 
     b4_subset = p_dir.get_band_subset(p_dir.find_band("SRE_B4."), ulx=649455, uly=4238445, lrx=649465, lry=4238435)
     assert type(b4_subset) is numpy.ndarray
+
+def test_product_mask_use_nan():
+    logger.info("TESTING PRODUCT GET_MASK WITH NAN")
+    p_dir = Product.Product(TEST_DATA_PATH + "acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0",
+                                  logger)
+    clm = numpy.zeros((3,3)) + 33
+    edg = numpy.zeros_like(clm) + 1
+    clm[1,:] = numpy.nan
+    clm[2, :] = numpy.nan
+    assert utilities.count_nan(clm) == 6
+    edg[:,1] = numpy.nan
+    assert utilities.count_nan(edg) == 3
+    mask, ratio = p_dir.get_mask(clm,edg, stats=True, use_nodata=True)
+    assert numpy.sum(mask) == 2
+    assert ratio == pytest.approx(2/9*100)
+    assert mask[1,1] == 1
+    assert mask[2,1] == 1
+    logger.debug("test_product_mask ratio=%6.4f" % ratio)
+
+def test_product_mask_use_zeros():
+    logger.info("TESTING PRODUCT GET_MASK WITH ZEROS")
+    p_dir = Product.Product(TEST_DATA_PATH + "acix_carpentras/SENTINEL2A_20171007-103241-161_L2A_T31TFJ_C_V1-0",
+                                  logger)
+    clm = numpy.zeros((3,3)) + 33
+    edg = numpy.zeros_like(clm) + 1
+    clm[1,:] = 0
+    clm[2, :] = 0
+    assert numpy.count_nonzero(clm) == 3
+    edg[:,1] = 0
+    assert numpy.count_nonzero(edg) == 6
+    mask, ratio = p_dir.get_mask(clm,edg, stats=True, use_nodata=False)
+    assert numpy.sum(mask) == 2
+    assert ratio == pytest.approx(2/9*100)
+    assert mask[1,1] == 1
+    assert mask[2,1] == 1
+    logger.debug("test_product_mask ratio=%6.4f" % ratio)
 
 ## TEST PRODUCT_ZIP_VENUS
 def test_product_zip_venus():
