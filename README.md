@@ -11,20 +11,20 @@ version 0.1.0 (not stable)
 
 ```
 ----------- coverage: platform linux, python 3.7.7-final-0 -----------
-Name                        Stmts   Miss  Cover
------------------------------------------------
-common/Collection.py           63      4    94%
+Name                        Stmts   Miss  Cover   Missing
+---------------------------------------------------------
+common/Collection.py           63      4    94%   57, 88-89, 103
 common/Comparison.py           55      0   100%
-common/Product.py             151     16    89%
-common/Roi.py                  70      8    89%
+common/Product.py             151     16    89%   48-54, 64-65, 81, 122-125, 221, 224, 241
+common/Roi.py                  70      8    89%   51-52, 57-58, 89-93, 110
 common/test_Collection.py      18      0   100%
 common/test_Comparison.py      23      0   100%
 common/test_Product.py        129      0   100%
 common/test_Roi.py            103      0   100%
-common/test_utilities.py       66      0   100%
-common/utilities.py            62      7    89%
------------------------------------------------
-TOTAL                         740     35    95%
+common/test_utilities.py       75      0   100%
+common/utilities.py            62      3    95%   27-28, 37
+---------------------------------------------------------
+TOTAL                         749     31    96%
 
 ```
 

@@ -80,3 +80,15 @@ def test_roi_quicklook_partly():
     assert type(r) is numpy.ndarray
     is_quicklook = utilities.make_quicklook_rgb(r, g, b, logger, outfile="partly.png", vmax=None)
     assert is_quicklook == 0
+
+    is_quicklook = utilities.make_quicklook_rgb(r, g, b, logger, outfile="partly.jpg", vmax=None)
+    assert is_quicklook == 0
+
+def test_quicklook_bad_cases():
+    bad = None
+    is_not_quicklook = utilities.make_quicklook_rgb(bad, bad, bad, logger, outfile="bad.png", vmax=None)
+    assert is_not_quicklook == 1
+
+    zeros = numpy.zeros([9,9])
+    is_quicklook = utilities.make_quicklook_rgb(zeros, zeros, zeros, logger, outfile="zeros.png", vmax=None)
+    assert is_quicklook == 0
