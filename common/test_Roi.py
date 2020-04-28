@@ -11,6 +11,7 @@ import Roi
 import Product
 import utilities
 import numpy
+import matplotlib.pylab as pl
 
 TEST_DATA_PATH = "/home/colin/code/mtools/test_data/"
 
@@ -114,33 +115,6 @@ def test_clm_partly_cloudy_values():
     assert numpy.min(mask) == 0
     assert numpy.max(mask) == 1
     assert numpy.sum(mask) == 518
-
-
-def test_roi_quicklook_partly():
-    logger.info("test_roi_quicklook_partly")
-    r_partly_cloudy = Roi.Roi([33, 678644, 4246106], 500, logger)
-    b = p_venus.get_band_subset(p_venus.find_band("SRE_B3."), roi=r_partly_cloudy, scalef=p_venus.sre_scalef)
-    g = p_venus.get_band_subset(p_venus.find_band("SRE_B4."), roi=r_partly_cloudy, scalef=p_venus.sre_scalef)
-    r = p_venus.get_band_subset(p_venus.find_band("SRE_B7."), roi=r_partly_cloudy, scalef=p_venus.sre_scalef)
-
-    assert type(b) is numpy.ndarray
-    assert type(g) is numpy.ndarray
-    assert type(r) is numpy.ndarray
-    is_quicklook = utilities.make_quicklook_rgb(r, g, b, logger, outfile="partly.png", vmax=None)
-    assert is_quicklook == 0
-
-
-def test_roi_quicklook_clear():
-    logger.info("test_roi_quicklook_clear")
-    r_clear = Roi.Roi([22, 649460, 4238440], 500, logger)
-    b = p_venus.get_band_subset(p_venus.find_band("SRE_B3."), roi=r_clear, scalef=p_venus.sre_scalef)
-    g = p_venus.get_band_subset(p_venus.find_band("SRE_B4."), roi=r_clear, scalef=p_venus.sre_scalef)
-    r = p_venus.get_band_subset(p_venus.find_band("SRE_B7."), roi=r_clear, scalef=p_venus.sre_scalef)
-    assert type(b) is numpy.ndarray
-    assert type(g) is numpy.ndarray
-    assert type(r) is numpy.ndarray
-    is_quicklook = utilities.make_quicklook_rgb(r, g, b, logger, outfile="clear.png")
-    assert is_quicklook == 0
 
 
 def test_roi_fully_cloudy():
