@@ -11,23 +11,24 @@ version 0.1.0 (not stable)
 
 ```
 ----------- coverage: platform linux, python 3.7.7-final-0 -----------
-Name                        Stmts   Miss  Cover'
+Name                        Stmts   Miss  Cover
 -----------------------------------------------
 common/Collection.py           63      4    94%
 common/Comparison.py           55      0   100%
-common/Product.py             147     16    89%
+common/Product.py             151     16    89%
 common/Roi.py                  70      8    89%
 common/test_Collection.py      18      0   100%
 common/test_Comparison.py      23      0   100%
-common/test_Product.py         96      0   100%
-common/test_Roi.py            124      0   100%
-common/utilities.py            56      7    88%
+common/test_Product.py        129      0   100%
+common/test_Roi.py            103      0   100%
+common/test_utilities.py       66      0   100%
+common/utilities.py            62      7    89%
 -----------------------------------------------
-TOTAL                         652     35    95%
+TOTAL                         740     35    95%
 
 ```
 
-#### Venv files: 
+#### Python v-env: 
 * requirement.txt (pip)
 * mtools.yml (conda)
 
