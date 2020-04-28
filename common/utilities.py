@@ -97,6 +97,21 @@ def _convert_band_uint8(band, vmin=0, vmax=None):
 
     return img.astype(np.uint8)
 
+def count_nan(arr):
+    """
+    Count the number of NaN in arr
+    :param arr:
+    :return: integer
+    """
+    return np.count_nonzero(np.isnan(arr))
+
+def count_not_nan(arr):
+    """
+    Count the number of NaN in arr
+    :param arr:
+    :return: integer
+    """
+    return np.count_nonzero(~np.isnan(arr))
 
 def rmse(v1, v2):
     """
@@ -106,6 +121,15 @@ def rmse(v1, v2):
     :return: float rmse
     """
     return np.sqrt(np.nanmean((v1 - v2) ** 2))
+
+def mse(v1, v2):
+    """
+    Return RMSE between two vectors of same length
+    :param v1: numpy vector
+    :param v2: numpy vector
+    :return: float rmse
+    """
+    return np.nanmean((v1 - v2) ** 2)
 
 
 def write_list_to_file(guest_list, filename):
