@@ -171,6 +171,8 @@ class Product:
 class Product_dir_maja(Product):
     """
     Sub-class of Product for Maja specific methods
+    TODO: Add R1 & R2 to band_names
+    TODO: Preload CLM_R1, CLM_R2, EDG_R1 and EDG_R2 to create a boolean MASK_R1 and MASK_R2 to use in get_band to return a numpy.ma
     """
 
     def __init__(self, path, logger):
