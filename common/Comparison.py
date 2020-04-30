@@ -7,10 +7,16 @@ __author__ = "Jerome Colin"
 __license__ = "MIT"
 __version__ = "0.1.0"
 
-import Product
-import utilities
+import os, sys
 import numpy
-
+try:
+    import Product
+    import utilities
+except ModuleNotFoundError:
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(this_dir)
+    import Product
+    import utilities
 
 class Comparison:
     def __init__(self, collection1, collection2, logger):
