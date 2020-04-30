@@ -7,6 +7,7 @@ __author__ = "Jerome Colin"
 __license__ = "MIT"
 __version__ = "0.1.0"
 
+
 import zipfile
 import sys
 import os
@@ -14,7 +15,12 @@ import subprocess, shlex
 import osgeo.gdal as gdal
 import glob
 import numpy as np
-import utilities
+try:
+    import utilities
+except ModuleNotFoundError:
+    this_dir = os.path.dirname(os.path.abspath(__file__))
+    sys.path.append(this_dir)
+    import utilities
 
 
 class Product:
