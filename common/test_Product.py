@@ -91,6 +91,38 @@ def test_product_zip_venus():
     logger.info("test_product_zip_venus_get_band")
     b4 = p_zip_venus.get_band(b4_filename)
     assert type(b4) is numpy.ndarray
+    logger.debug("b4 is of size %i, with shape %s" % (numpy.size(b4), str(numpy.shape(b4))))
+    assert numpy.shape(b4)[0] == 11686
+    assert numpy.shape(b4)[1] == 11711
+    b4 = None
+
+    logger.info("test_product_zip_venus_get_band_aot")
+    atb_filename = p_zip_venus.find_band("ATB_XS")
+    assert atb_filename == "VENUS-XS_20200402-191352-000_L2A_GALLOP30_C_V2-2/VENUS-XS_20200402-191352-000_L2A_GALLOP30_C_V2-2_ATB_XS.tif"
+    atb_bands = p_zip_venus.get_band(atb_filename)
+    logger.debug("atb_bands is of type %s" % str(type(atb_bands)))
+    logger.debug("atb_bands is of size %i, with shape %s" % (numpy.size(atb_bands), str(numpy.shape(atb_bands))))
+    assert type(atb_bands) is numpy.ndarray
+    assert numpy.shape(atb_bands)[0] == 2
+    atb_bands = None
+
+    aot = p_zip_venus.get_band(atb_filename, layer=1)
+    logger.debug("aot is of size %i, with shape %s" % (numpy.size(aot), str(numpy.shape(aot))))
+    assert numpy.shape(aot)[0] == 11686
+    assert numpy.shape(aot)[1] == 11711
+    aot = None
+
+    aot = p_zip_venus.get_band(p_zip_venus.find_band(p_zip_venus.aot_name), scalef=p_zip_venus.aot_scalef, layer=p_zip_venus.aot_layer)
+    logger.debug("aot is of size %i, with shape %s" % (numpy.size(aot), str(numpy.shape(aot))))
+    assert numpy.shape(aot)[0] == 11686
+    assert numpy.shape(aot)[1] == 11711
+    aot = None
+
+    vap = p_zip_venus.get_band(p_zip_venus.find_band(p_zip_venus.vap_name), scalef=p_zip_venus.vap_scalef, layer=p_zip_venus.vap_layer)
+    logger.debug("vap is of size %i, with shape %s" % (numpy.size(vap), str(numpy.shape(vap))))
+    assert numpy.shape(vap)[0] == 11686
+    assert numpy.shape(vap)[1] == 11711
+    vap = None
 
     logger.info("test_product_zip_venus_get_band_subset")
     b4_subset = p_zip_venus.get_band_subset(b4_filename, ulx=649455, uly=4238445, lrx=649465, lry=4238435)
@@ -113,6 +145,20 @@ def test_product_zip_venus():
     assert b4_subset_SRE[1, 0] == 0.086
     assert b4_subset_SRE[0, 1] == 0.113
     assert b4_subset_SRE[1, 1] == 0.094
+
+    aot = p_zip_venus.get_band_subset(p_zip_venus.find_band(p_zip_venus.aot_name), ulx=649455, uly=4238445, lrx=649465, lry=4238435, scalef=p_zip_venus.aot_scalef, layer=p_zip_venus.aot_layer)
+    logger.debug("aot is of size %i, with shape %s" % (numpy.size(aot), str(numpy.shape(aot))))
+    assert aot[0, 0] == 0.195
+    assert aot[1, 0] == 0.195
+    assert aot[0, 1] == 0.195
+    assert aot[1, 1] == 0.195
+
+    vap = p_zip_venus.get_band_subset(p_zip_venus.find_band(p_zip_venus.vap_name), ulx=649455, uly=4238445, lrx=649465, lry=4238435, scalef=p_zip_venus.vap_scalef, layer=p_zip_venus.vap_layer)
+    logger.debug("vap is of size %i, with shape %s" % (numpy.size(vap), str(numpy.shape(vap))))
+    assert vap[0, 0] == 0.55
+    assert vap[1, 0] == 0.55
+    assert vap[0, 1] == 0.55
+    assert vap[1, 1] == 0.55
 
 ## TEST PRODUCT_HDF
 def test_product_hdf():

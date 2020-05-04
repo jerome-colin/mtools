@@ -68,6 +68,9 @@ class Roi_collection:
         # Get the list of bands to compute stats for
         bands = product.band_names
 
+        bands.append("AOT.")
+        bands.append("VAP.")
+
         list_stats = []
 
         # For each Roi in Roi_collection:
@@ -79,7 +82,7 @@ class Roi_collection:
             edg = product.get_band_subset(product.find_band(product.edg_name), roi=roi_n)
             mask = product.get_mask(clm, edg)
 
-            # For each band in product, extract a subset according to ROI and return stats
+            # For each SRE band in product, extract a subset according to ROI and return stats
             for band in bands:
                 # samples, minmax, avg, variance, skewness, kurtosis
                 band_size = mask.size
@@ -102,7 +105,14 @@ class Roi_collection:
         :param band: a string that helps identify a file
         :return:
         """
-        subset = product.get_band_subset(product.find_band(band), roi=roi, scalef=product.sre_scalef)
+
+        if band == "AOT.":
+            subset = product.get_band_subset(product.find_band(product.aot_name), roi=roi, scalef=product.aot_scalef, layer=product.aot_layer)
+        elif band == "VAP.":
+            subset = product.get_band_subset(product.find_band(product.vap_name), roi=roi, scalef=product.vap_scalef, layer=product.vap_layer)
+        else:
+            subset = product.get_band_subset(product.find_band(band), roi=roi, scalef=product.sre_scalef)
+
         if mask is not None:
             search = np.where(mask == 1)
             valid_pixels = subset[search]
