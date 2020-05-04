@@ -141,7 +141,7 @@ def test_Roi_collection_compute_stats_all_bands():
     collection_10m = Roi.Roi_collection(TEST_DATA_PATH + "demo.csv", 10, logger)
     list_stats = collection_10m.compute_stats_all_bands(p_venus, logger)
     logger.info("test_Roi_collection_compute_stats_all_bands")
-    assert list_stats[15][0] == 4
-    assert list_stats[15][1][0] == 0.086
-    assert list_stats[15][1][1] == 0.113
-    assert list_stats[15][2] == 0.0965
+    assert list_stats[17][0] == 4
+    assert list_stats[17][1][0] == 0.086
+    assert list_stats[17][1][1] == 0.113
+    assert list_stats[17][2] == 0.0965

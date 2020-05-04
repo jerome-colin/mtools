@@ -70,7 +70,7 @@ class Product:
             self.logger.error("No match found for band name %s" % band)
             sys.exit(2)
 
-    def get_band(self, band, scalef=None):
+    def get_band(self, band, scalef=None, layer=None):
         """
         Return a gdal object from an image in a zip archive
         :param fband:
@@ -79,16 +79,21 @@ class Product:
         self.logger.debug('Gdal.Open using %s' % (band))
         if self.ptype == "DIR":
             if scalef is not None:
-                return gdal.Open('%s' % (band)).ReadAsArray() / scalef
+                band_arr = gdal.Open('%s' % (band)).ReadAsArray() / scalef
             else:
-                return gdal.Open('%s' % (band)).ReadAsArray()
+                band_arr = gdal.Open('%s' % (band)).ReadAsArray()
         if self.ptype == "ZIP":
             if scalef is not None:
-                return gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray() / scalef
+                band_arr = gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray() / scalef
             else:
-                return gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray()
+                band_arr = gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray()
 
-    def get_band_subset(self, band, roi=None, ulx=None, uly=None, lrx=None, lry=None, scalef=None):
+        if layer is not None:
+            return band_arr[layer,:,:]
+        else:
+            return band_arr
+
+    def get_band_subset(self, band, roi=None, ulx=None, uly=None, lrx=None, lry=None, scalef=None, layer=None):
         """Extract a subset from an image file
         :param band: product image filename from content_list
         :param ulx: upper left x
@@ -131,9 +136,14 @@ class Product:
             sys.exit(1)
 
         if scalef is not None:
-            return img.ReadAsArray() / scalef
+            band_arr = img.ReadAsArray() / scalef
         else:
-            return img.ReadAsArray()
+            band_arr = img.ReadAsArray()
+
+        if layer is not None:
+            return band_arr[layer,:,:]
+        else:
+            return band_arr
 
     def get_content_list(self):
         self.content_list = glob.glob(self.path + '/*')
@@ -305,5 +315,11 @@ class Product_zip_venus(Product_zip):
                            "SRE_B12.", ]
 
         self.sre_scalef = 1000
+        self.aot_scalef = 200
+        self.vap_scalef = 20
+        self.aot_name = "ATB_XS"
+        self.vap_name = "ATB_XS"
+        self.aot_layer = 1
+        self.vap_layer = 0
         self.clm_name = "CLM_XS"
         self.edg_name = "EDG_XS"
