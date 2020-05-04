@@ -14,17 +14,17 @@ version 0.1.0 (not stable)
 Name                        Stmts   Miss  Cover   Missing
 ---------------------------------------------------------
 common/Collection.py           63      4    94%   57, 88-89, 103
-common/Comparison.py           55      0   100%
-common/Product.py             151     16    89%   48-54, 64-65, 81, 122-125, 221, 224, 241
-common/Roi.py                  70      8    89%   51-52, 57-58, 89-93, 110
+common/Comparison.py           62      5    92%   15-19
+common/Product.py             168     19    89%   20-23, 54-60, 70-71, 133-136, 239, 242, 259
+common/Roi.py                  76      8    89%   51-52, 57-58, 92-96, 120
 common/test_Collection.py      18      0   100%
 common/test_Comparison.py      23      0   100%
-common/test_Product.py        129      0   100%
+common/test_Product.py        169      0   100%
 common/test_Roi.py            103      0   100%
 common/test_utilities.py       75      0   100%
 common/utilities.py            62      3    95%   27-28, 37
 ---------------------------------------------------------
-TOTAL                         749     31    96%
+TOTAL                         819     39    95%
 
 ```
 
