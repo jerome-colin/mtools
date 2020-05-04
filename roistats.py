@@ -37,7 +37,7 @@ def main():
     roi_collection = common.Roi.Roi_collection(args.coordinates, args.extent, logger)
 
     # Compute statistics for a given product
-    list_stats = roi_collection.compute_stats_all_bands(vns_product, logger, stdout=True)
+    list_stats = roi_collection.compute_stats_all_bands(vns_product, logger, stdout=True, withAOT=True, withVAP=True)
 
     sys.exit(0)
 

@@ -57,7 +57,7 @@ class Roi_collection:
             self.logger.error("Wrong extent given : %i" % self.extent)
             sys.exit(2)
 
-    def compute_stats_all_bands(self, product, logger, stdout=False):
+    def compute_stats_all_bands(self, product, logger, stdout=False, withAOT=False, withVAP=False):
         """
         Print statistiques for all bands of a product for all ROIs in collectoin
         :param product: a Product instance
@@ -68,8 +68,10 @@ class Roi_collection:
         # Get the list of bands to compute stats for
         bands = product.band_names
 
-        bands.append("AOT.")
-        bands.append("VAP.")
+        if withAOT:
+            bands.append("AOT.")
+        if withVAP:
+            bands.append("VAP.")
 
         list_stats = []
 
