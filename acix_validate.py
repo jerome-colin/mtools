@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Compute statistics over a square ROI
+Compute per site and stacked RMSE for ACIX
 
 Require: see mtools.yml for conda environment configuration
 
@@ -15,7 +15,6 @@ import argparse
 import numpy as np
 import common.utilities as utl
 import common.Product as prd
-import common.Roi
 import common.Collection as clc
 import common.Comparison as cmp
 
@@ -24,6 +23,7 @@ def main():
     # Argument parser
     parser = argparse.ArgumentParser()
     parser.add_argument("list", help="List of paths of collection")
+    parser.add_argument("-s", "--save", help="Write location results as npy instead of stacking in memory", action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
     args = parser.parse_args()
 
@@ -49,6 +49,8 @@ def main():
     for p in paths_list:
         paths = p.split(',')
         location_name = paths[0].split('/')[-1]
+
+        # Container for local statistics
         local_stats = (
             [[], []],
             [[], []],
@@ -76,27 +78,37 @@ def main():
                 clm = p_maja.get_band(p_maja.find_band("CLM_" + bdef_acix[b][2]))
                 edg = p_maja.get_band(p_maja.find_band("EDG_" + bdef_acix[b][2]))
                 mask, ratio = p_maja.get_mask(clm, edg, stats=True)
+                del clm
+                del edg
 
                 b_ref_valid = utl.is_valid(b_ref, mask)
+                del b_ref
                 b_maja_valid = utl.is_valid(b_maja, mask)
+                del b_maja
+                del mask
 
                 if len(b_ref_valid) == len(b_maja_valid):
                     local_stats[b][0].extend(b_ref_valid)
                     local_stats[b][1].extend(b_maja_valid)
-                    bdef_acix[b][3].extend(b_ref_valid)
-                    bdef_acix[b][4].extend(b_maja_valid)
+                    if not args.save:
+                        bdef_acix[b][3].extend(b_ref_valid)
+                        bdef_acix[b][4].extend(b_maja_valid)
+                    else:
+                        np.save(location_name + '_' + bdef_acix[b][0] + '.npy', np.stack((b_ref_valid, b_maja_valid)))
+
                 else:
                     logger.error("Length unmatch between %s and %s" % (bdef_acix[b][0], bdef_acix[b][1]))
 
         for l in range(len(local_stats)):
             rmse = utl.rmse(np.asarray(local_stats[l][0]), np.asarray(local_stats[l][1]))
-            print("%s, %s, %8.6f" % (location_name, bdef_acix[l][0], rmse))
+            logger.info("RESULT, %s, %s, %8.6f" % (location_name, bdef_acix[l][0], rmse))
 
-        local_stats = None
+        del local_stats
 
-    for b in range(len(bdef_acix)):
-        rmse = utl.rmse(np.asarray(bdef_acix[b][3]), np.asarray(bdef_acix[b][4]))
-        print("Stacked, %s, %8.6f" % (bdef_acix[b][0], rmse))
+    if not args.save:
+        for b in range(len(bdef_acix)):
+            rmse = utl.rmse(np.asarray(bdef_acix[b][3]), np.asarray(bdef_acix[b][4]))
+            logger.info("RESULT, Stacked, %s, %8.6f" % (bdef_acix[b][0], rmse))
 
     sys.exit(0)
 
