@@ -14,7 +14,10 @@ import re
 class Collection:
 
     def __init__(self, path, logger):
-        self.path = path
+        self.path = path.strip()
+        if self.path[-1] != '/':
+            self.path += '/'
+
         self.logger = logger
         self.content_list = self._discover()
         self.products_timestamps = self._get_products_timestamps()

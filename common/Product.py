@@ -70,7 +70,7 @@ class Product:
             self.logger.error("No match found for band name %s" % band)
             sys.exit(2)
 
-    def get_band(self, band, scalef=None, layer=None):
+    def get_band(self, band, scalef=None, layer=None, tiny=False):
         """
         Return a gdal object from an image in a zip archive
         :param fband:
@@ -87,6 +87,9 @@ class Product:
                 band_arr = gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray() / scalef
             else:
                 band_arr = gdal.Open('/vsizip/%s/%s' % (self.path, band)).ReadAsArray()
+
+        if tiny:
+            band_arr = (band_arr*10000).astype(np.uint16)
 
         if layer is not None:
             return band_arr[layer,:,:]
@@ -244,14 +247,17 @@ class Product_hdf(Product):
         if is_unique == 1:
             return subds_id
 
-    def get_band(self, fband, scalef=None):
+    def get_band(self, fband, scalef=None, tiny=False):
         """
         Overriding mother class method
         :param fband:
         :return:
         """
         if scalef is not None:
-            return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray() / scalef
+            if tiny:
+                return (gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray() / scalef * 10000).astype(np.uint16)
+            else:
+                return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray() / scalef
         else:
             return gdal.Open(self.content_list[fband][0], gdal.GA_ReadOnly).ReadAsArray().astype(np.int16)
 
