@@ -122,6 +122,15 @@ def rmse(v1, v2):
     """
     return np.sqrt(np.nanmean((v1 - v2) ** 2))
 
+def rmse_d(diff):
+    """
+    Return RMSE from input diff between two vectors of same length
+    :param v1: numpy vector
+    :param v2: numpy vector
+    :return: float rmse
+    """
+    return np.sqrt(np.nanmean((diff) ** 2))
+
 def mse(v1, v2):
     """
     Return RMSE between two vectors of same length
