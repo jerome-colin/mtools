@@ -13,6 +13,43 @@ import numpy as np
 from PIL import Image as pillow
 
 
+def accuracy(delta_sr):
+    """
+    Accuracy as defined in ACIX I APU criterion paper
+    :param delta_sr: see delta_sr
+    :return: Accuracy
+    """
+    return np.sum(delta_sr) / len(delta_sr)
+
+
+def count_nan(arr):
+    """
+    Count the number of NaN in arr
+    :param arr:
+    :return: integer
+    """
+    return np.count_nonzero(np.isnan(arr))
+
+
+def count_not_nan(arr):
+    """
+    Count the number of NaN in arr
+    :param arr:
+    :return: integer
+    """
+    return np.count_nonzero(~np.isnan(arr))
+
+
+def delta_sr(processor_sr, aeronet_sr):
+    """
+    Convention in ACIX I paper
+    :param processor_sr: surface reflectance of the processor
+    :param aeronet_sr: surface reflectance of the reference (aeronet based)
+    :return:
+    """
+    return processor_sr - aeronet_sr
+
+
 def get_logger(name, verbose=False):
     """
     Simple logger
@@ -37,6 +74,18 @@ def get_logger(name, verbose=False):
         logger.setLevel(logging.INFO)
 
     return logger
+
+
+def is_valid(band, mask):
+    """
+    Return a vector of pixels from the array 'band' that match 'mask'=1
+    :param band:
+    :param mask:
+    :return: a numpy vector
+    """
+    search = np.where(mask == 1)
+    valid_pixels = band[search]
+    return valid_pixels
 
 
 def make_quicklook_rgb(r, g, b, logger, vmax=0.5, outfile="quicklook.png"):
@@ -67,51 +116,25 @@ def make_quicklook_rgb(r, g, b, logger, vmax=0.5, outfile="quicklook.png"):
         return 1
 
 
-def is_valid(band, mask):
+def mse(v1, v2):
     """
-    Return a vector of pixels from the array 'band' that match 'mask'=1
-    :param band:
-    :param mask:
-    :return: a numpy vector
+    Return RMSE between two vectors of same length
+    :param v1: numpy vector
+    :param v2: numpy vector
+    :return: float rmse
     """
-    search = np.where(mask == 1)
-    valid_pixels = band[search]
-    return valid_pixels
+    return np.nanmean((v1 - v2) ** 2)
 
 
-def _convert_band_uint8(band, vmin=0, vmax=None):
-    """Convert a band array to unint8
-    :return: an unint8 numpy array
+def precision(delta_sr):
     """
-    if vmax == None:
-        b_max = np.nanmax(band)
-    else:
-        b_max = vmax
-
-    clipped_band = np.clip(band, vmin, b_max)
-
-    if b_max > 0:
-        img = clipped_band / b_max * 256
-    else:
-        img = clipped_band * 0
-
-    return img.astype(np.uint8)
-
-def count_nan(arr):
+    Precision as defined in ACIX I APU criterion paper
+    :param delta_sr: see delta_sr
+    :return: Precision
     """
-    Count the number of NaN in arr
-    :param arr:
-    :return: integer
-    """
-    return np.count_nonzero(np.isnan(arr))
+    acc = accuracy(delta_sr)
+    return np.sqrt((np.sum((delta_sr - acc) ** 2)) / (len(delta_sr) - 1))
 
-def count_not_nan(arr):
-    """
-    Count the number of NaN in arr
-    :param arr:
-    :return: integer
-    """
-    return np.count_nonzero(~np.isnan(arr))
 
 def rmse(v1, v2):
     """
@@ -131,14 +154,13 @@ def rmse_d(diff):
     """
     return np.sqrt(np.nanmean((diff) ** 2))
 
-def mse(v1, v2):
+
+def uncertainty(delta_sr):
     """
-    Return RMSE between two vectors of same length
-    :param v1: numpy vector
-    :param v2: numpy vector
-    :return: float rmse
+    Uncertainty as defined in ACIX I APU criterion paper
+    :return: Uncertainty
     """
-    return np.nanmean((v1 - v2) ** 2)
+    return np.sqrt(np.sum(delta_sr**2) / len(delta_sr))
 
 
 def write_list_to_file(guest_list, filename):
@@ -148,3 +170,22 @@ def write_list_to_file(guest_list, filename):
         for entries in guest_list:
             outfile.write(str(entries))
             outfile.write("\n")
+
+
+def _convert_band_uint8(band, vmin=0, vmax=None):
+    """Convert a band array to unint8
+    :return: an unint8 numpy array
+    """
+    if vmax == None:
+        b_max = np.nanmax(band)
+    else:
+        b_max = vmax
+
+    clipped_band = np.clip(band, vmin, b_max)
+
+    if b_max > 0:
+        img = clipped_band / b_max * 256
+    else:
+        img = clipped_band * 0
+
+    return img.astype(np.uint8)
