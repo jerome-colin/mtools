@@ -13,6 +13,15 @@ import numpy as np
 from PIL import Image as pillow
 
 
+def accuracy(delta_sr):
+    """
+    Accuracy as defined in ACIX I APU criterion paper
+    :param delta_sr: see delta_sr
+    :return: Accuracy
+    """
+    return np.sum(delta_sr) / len(delta_sr)
+
+
 def count_nan(arr):
     """
     Count the number of NaN in arr
@@ -29,6 +38,16 @@ def count_not_nan(arr):
     :return: integer
     """
     return np.count_nonzero(~np.isnan(arr))
+
+
+def delta_sr(processor_sr, aeronet_sr):
+    """
+    Convention in ACIX I paper
+    :param processor_sr: surface reflectance of the processor
+    :param aeronet_sr: surface reflectance of the reference (aeronet based)
+    :return:
+    """
+    return processor_sr - aeronet_sr
 
 
 def get_logger(name, verbose=False):
@@ -107,6 +126,16 @@ def mse(v1, v2):
     return np.nanmean((v1 - v2) ** 2)
 
 
+def precision(delta_sr):
+    """
+    Precision as defined in ACIX I APU criterion paper
+    :param delta_sr: see delta_sr
+    :return: Precision
+    """
+    acc = accuracy(delta_sr)
+    return np.sqrt((np.sum((delta_sr - acc) ** 2)) / (len(delta_sr) - 1))
+
+
 def rmse(v1, v2):
     """
     Return RMSE between two vectors of same length
@@ -125,6 +154,13 @@ def rmse_d(diff):
     """
     return np.sqrt(np.nanmean((diff) ** 2))
 
+
+def uncertainty(delta_sr):
+    """
+    Uncertainty as defined in ACIX I APU criterion paper
+    :return: Uncertainty
+    """
+    return np.sqrt(np.sum(delta_sr**2) / len(delta_sr))
 
 
 def write_list_to_file(guest_list, filename):
