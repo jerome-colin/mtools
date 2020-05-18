@@ -8,7 +8,8 @@ Require: see mtools.yml for conda environment configuration
 
 __author__ = "Jerome Colin"
 __license__ = "MIT"
-__version__ = "0.1.0"
+__version__ = "1.0.0"
+
 
 import sys
 import argparse

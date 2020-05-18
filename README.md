@@ -5,7 +5,7 @@
 
 #### Status
 
-version 0.1.0 (not stable)
+version 1.0.0
 
 #### Testing coverage (with pytest):
 

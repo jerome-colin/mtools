@@ -1,3 +1,6 @@
+__author__ = "Jerome Colin"
+__license__ = "MIT"
+__version__ = "1.0.0"
 
 import sys
 import argparse
