@@ -101,14 +101,20 @@ def main():
 
         for l in range(len(local_stats)):
             rmse = utl.rmse_d(np.asarray(local_stats[l]))
-            logger.info("RESULT, %s, %s, %8.6f" % (location_name, bdef_acix[l][0], rmse))
+            acix_A = utl.accuracy(np.asarray(local_stats[l]))
+            acix_P = utl.precision(np.asarray(local_stats[l]))
+            acix_U = utl.uncertainty(np.asarray(local_stats[l]))
+            logger.info("RESULT, %s, %s, %8.6f, %8.6f, %8.6f, %8.6f" % (location_name, bdef_acix[l][0], rmse, acix_A, acix_P, acix_U))
 
         del local_stats
 
     if not args.save:
         for b in range(len(bdef_acix)):
             rmse = utl.rmse_d(np.asarray(bdef_acix[b][3]))
-            logger.info("RESULT, Stacked, %s, %8.6f" % (bdef_acix[b][0], rmse))
+            acix_A = utl.accuracy(np.asarray(np.asarray(bdef_acix[b][3])))
+            acix_P = utl.precision(np.asarray(np.asarray(bdef_acix[b][3])))
+            acix_U = utl.uncertainty(np.asarray(np.asarray(bdef_acix[b][3])))
+            logger.info("RESULT, Stacked, %s, %8.6f, %8.6f, %8.6f, %8.6f" % (bdef_acix[b][0], rmse, acix_A, acix_P, acix_U))
 
     sys.exit(0)
 
