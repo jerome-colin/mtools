@@ -13,7 +13,7 @@ import common.Comparison as cmp
 
 def test_acix_validate():
 
-    list = "/home/colin/code/mtools/acix_list.txt"
+    list = "acix_list.txt"
     save = False
     verbose = False
 
