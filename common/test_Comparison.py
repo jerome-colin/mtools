@@ -5,7 +5,7 @@ Pytest for Collection
 
 __author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
-__version__ = "1.0.1"
+__version__ = "1.0.2"
 
 import Collection
 import Comparison
