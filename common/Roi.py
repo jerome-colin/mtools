@@ -3,7 +3,7 @@ ROI collection and object definitions
 
 """
 
-__author__ = "Jerome Colin"
+__author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
 __version__ = "1.0.1"
 

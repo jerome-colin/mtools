@@ -3,7 +3,7 @@ Pytest for Collection
 
 """
 
-__author__ = "Jerome Colin"
+__author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
 __version__ = "1.0.1"
 
@@ -27,6 +27,8 @@ def test_discover():
     assert acix_maja_collection.type_count == [0, 0, 6, 0]
 
 def test_products_timestamps():
-    assert venus_collection.products_timestamps[0][1] == "20200402"
-    assert acix_maja_collection.products_timestamps[0][1] == "20171005"
-    assert acix_vermote_collection.products_timestamps[0][1] == "20171010"
+    assert sorted(venus_collection.products_timestamps, key = lambda x: x[1])[0][1] == "20200402"
+    assert sorted(acix_maja_collection.products_timestamps, key = lambda x: x[1])[0][1] == "20171005"
+    assert sorted(acix_maja_collection.products_timestamps, key=lambda x: x[1])[-1][1] == "20171030"
+    assert sorted(acix_vermote_collection.products_timestamps, key = lambda x: x[1])[0][1] == "20171005"
+    assert sorted(acix_vermote_collection.products_timestamps, key=lambda x: x[1])[-1][1] == "20171030"
