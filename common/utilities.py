@@ -3,7 +3,7 @@ Utilities for mtools
 
 """
 
-__author__ = "Jerome Colin"
+__author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
 __version__ = "1.0.1"
 
@@ -73,6 +73,8 @@ def get_logger(name, verbose=False):
         logger.setLevel(logging.DEBUG)
     else:
         logger.setLevel(logging.INFO)
+
+    logger.info("Generated with MTOOLS version : " + __version__ + ". For help, please contact " + __author__)
 
     return logger
 
