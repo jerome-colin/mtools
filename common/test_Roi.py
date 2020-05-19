@@ -11,7 +11,6 @@ import Roi
 import Product
 import utilities
 import numpy
-import matplotlib.pylab as pl
 import os
 
 TEST_DATA_PATH = os.environ['TEST_DATA_PATH']

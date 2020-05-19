@@ -10,7 +10,6 @@ __version__ = "1.0.2"
 import Collection
 import Comparison
 import utilities
-import numpy
 import os
 
 TEST_DATA_PATH = os.environ['TEST_DATA_PATH']

@@ -5,7 +5,7 @@
 
 #### Status
 
-version 1.0.1
+version "1.0.2"
 
 #### Testing coverage (with pytest):
 
@@ -13,19 +13,18 @@ version 1.0.1
 ----------- coverage: platform linux, python 3.7.7-final-0 -----------
 Name                        Stmts   Miss  Cover   Missing
 ---------------------------------------------------------
-common/Collection.py           65      4    94%   60, 91-92, 106
-common/Comparison.py           35      5    86%   16-20
-common/Product.py             172     17    90%   54-60, 70-71, 92, 136-139, 242, 245, 258, 265
+common/Collection.py           65      5    92%   19, 60, 91-92, 106
+common/Comparison.py           38      8    79%   15-19, 50-52
+common/Product.py             172     21    88%   20-23, 54-60, 70-71, 92, 136-139, 242, 245, 258, 265
 common/Roi.py                  78     12    85%   51-52, 57-58, 72, 74, 94-98, 112, 114, 122
-common/test_Collection.py      18      0   100%
+common/test_Collection.py      21      0   100%
 common/test_Comparison.py      17      0   100%
-common/test_Product.py        169      0   100%
+common/test_Product.py        170      0   100%
 common/test_Roi.py            103      0   100%
-common/test_utilities.py       83      0   100%
-common/utilities.py            73      7    90%   64-65, 155, 169-172
-test_acix_validate.py          55      2    96%   84-87
+common/test_utilities.py       84      0   100%
+common/utilities.py            74     11    85%   65-66, 75, 89-91, 158, 172-175
 ---------------------------------------------------------
-TOTAL                         868     47    95%
+TOTAL                         822     57    93%
 
 
 ```
