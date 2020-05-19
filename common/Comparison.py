@@ -41,12 +41,16 @@ class Comparison:
         self.logger.debug(timestamps2)
 
         for i in range(len(self.collection1.products_timestamps)):
-            pid = timestamps2.index((timestamps1[i]))
-            matching_products.append([timestamps1[i], self.collection1.products_timestamps[i][0],
-                                      self.collection2.products_timestamps[pid][0]])
-            self.logger.info("Found matching for %s between %s and %s" %
-                             (timestamps1[i], self.collection1.products_timestamps[i][0],
-                              self.collection2.products_timestamps[pid][0]))
+            try:
+                pid = timestamps2.index((timestamps1[i]))
+                matching_products.append([timestamps1[i], self.collection1.products_timestamps[i][0],
+                                          self.collection2.products_timestamps[pid][0]])
+                self.logger.info("Found matching for %s between %s and %s" %
+                                 (timestamps1[i], self.collection1.products_timestamps[i][0],
+                                  self.collection2.products_timestamps[pid][0]))
+            except ValueError as err:
+                self.logger.warning("Couldn't find match for %s " % timestamps1[i])
+                self.logger.warning(err)
 
         self.logger.info("Collections have %i products matching in dates" % len(matching_products))
 
