@@ -25,6 +25,6 @@ def test_Comparison_basic():
     acix_vermote_collection = Collection.Collection(TEST_DATA_PATH + "vermote_carpentras/", logger)
 
     compare = Comparison.Comparison(acix_vermote_collection, acix_maja_collection, logger)
-    assert compare.matching_products[0][0] == "20171010"
-    assert compare.matching_products[0][1] == "/home/colin/code/mtools/test_data/vermote_carpentras/refsrs2-L1C_T31TFJ_A012017_20171010T104021-Carpentras.hdf"
-    assert compare.matching_products[0][2] == "/home/colin/code/mtools/test_data/acix_carpentras/SENTINEL2A_20171010-104021-460_L2A_T31TFJ_C_V1-0"
+    assert sorted(compare.matching_products, key = lambda x: x[1])[0][0] == "20171005"
+    assert sorted(compare.matching_products, key = lambda x: x[1])[0][1] == "/home/colin/code/mtools/test_data/vermote_carpentras/refsrs2-L1C_T31TFJ_A003037_20171005T104550-Carpentras.hdf"
+    assert sorted(compare.matching_products, key = lambda x: x[1])[0][2] == "/home/colin/code/mtools/test_data/acix_carpentras/SENTINEL2B_20171005-104550-197_L2A_T31TFJ_C_V1-0"
