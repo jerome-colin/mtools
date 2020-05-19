@@ -5,8 +5,9 @@ Tests Utilities for mtools
 
 __author__ = "Jerome Colin"
 __license__ = "MIT"
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 
+import os
 import utilities
 import Roi
 import Product
@@ -14,7 +15,7 @@ import numpy
 import pytest
 from sklearn.metrics import mean_squared_error
 
-TEST_DATA_PATH = "/home/colin/code/mtools/test_data/"
+TEST_DATA_PATH = os.environ['TEST_DATA_PATH']
 
 logger = utilities.get_logger('test_utilities', verbose=True)
 
