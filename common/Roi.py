@@ -5,7 +5,7 @@ ROI collection and object definitions
 
 __author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 import numpy as np
 from scipy import stats

@@ -5,11 +5,12 @@ Utilities for mtools
 
 __author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
-__version__ = "1.0.2"
+__version__ = "1.0.3"
 
 
 import logging
 import os
+import uuid
 import numpy as np
 from PIL import Image as pillow
 
@@ -59,7 +60,7 @@ def get_logger(name, verbose=False):
     :return: logger object
     """
     logger = logging.getLogger(name)
-    logging_file = name + '.log'
+    logging_file = name + '_' + str(uuid.uuid4()) + '.log'
     try:
         os.remove(logging_file)
     except FileNotFoundError:
