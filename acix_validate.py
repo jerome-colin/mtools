@@ -115,9 +115,9 @@ def main():
             acix_p[s] = np.nan
             acix_u[s] = np.nan
         else:
-            acix_a[s] = np.abs(utl.accuracy(np.asarray(final_stats[s])))
-            acix_p[s] = np.abs(utl.precision(np.asarray(final_stats[s])))
-            acix_u[s] = np.abs(utl.uncertainty(np.asarray(final_stats[s])))
+            acix_a[s] = utl.accuracy(np.asarray(final_stats[s]))
+            acix_p[s] = utl.precision(np.asarray(final_stats[s]))
+            acix_u[s] = utl.uncertainty(np.asarray(final_stats[s]))
         full_stats.extend(final_stats[s])
 
         logger.debug("RESULT, %s, %s, %8.3f, %8.3f, %i, %8.6f, %8.6f, %8.6f" %
@@ -130,9 +130,9 @@ def main():
                      acix_p[s],
                      acix_u[s]))
 
-    full_acix_a = np.abs(utl.accuracy(np.asarray(full_stats)))
-    full_acix_p = np.abs(utl.precision(np.asarray(full_stats)))
-    full_acix_u = np.abs(utl.uncertainty(np.asarray(full_stats)))
+    full_acix_a = utl.accuracy(np.asarray(full_stats))
+    full_acix_p = utl.precision(np.asarray(full_stats))
+    full_acix_u = utl.uncertainty(np.asarray(full_stats))
     full_n_sr = len(full_stats)
 
     logger.info("RESULT, %s, %s, %i, %8.6f, %8.6f, %8.6f" %
