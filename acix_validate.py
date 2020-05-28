@@ -75,29 +75,33 @@ def main():
             p_ref = prd.Product_hdf_acix(match[1], logger)
             p_maja = prd.Product_dir_maja(match[2], logger)
 
-            b_ref = p_ref.get_band(p_ref.find_band(bdef_acix[band_id][0]), scalef=p_ref.sre_scalef)
-            b_maja = p_maja.get_band(p_maja.find_band(bdef_acix[band_id][1]), scalef=p_maja.sre_scalef)
-            clm = p_maja.get_band(p_maja.find_band("CLM_" + bdef_acix[band_id][2]))
-            edg = p_maja.get_band(p_maja.find_band("EDG_" + bdef_acix[band_id][2]))
-            mask, ratio = p_maja.get_mask(clm, edg, stats=True)
-            del clm
-            del edg
+            try:
+                b_ref = p_ref.get_band(p_ref.find_band(bdef_acix[band_id][0]), scalef=p_ref.sre_scalef)
+                b_maja = p_maja.get_band(p_maja.find_band(bdef_acix[band_id][1]), scalef=p_maja.sre_scalef)
+                clm = p_maja.get_band(p_maja.find_band("CLM_" + bdef_acix[band_id][2]))
+                edg = p_maja.get_band(p_maja.find_band("EDG_" + bdef_acix[band_id][2]))
+                mask, ratio = p_maja.get_mask(clm, edg, stats=True)
+                del clm
+                del edg
 
-            b_ref_valid = utl.is_valid(b_ref, mask)
-            del b_ref
-            b_maja_valid = utl.is_valid(b_maja, mask)
-            del b_maja
-            del mask
+                b_ref_valid = utl.is_valid(b_ref, mask)
+                del b_ref
+                b_maja_valid = utl.is_valid(b_maja, mask)
+                del b_maja
+                del mask
 
-            if len(b_ref_valid) == len(b_maja_valid):
+                if len(b_ref_valid) == len(b_maja_valid):
 
-                for s in range(samples):
-                    for i in range(len(b_maja_valid)):
-                        if b_maja_valid[i] >= (s * step - step / 2) and b_maja_valid[i] < (s * step + step / 2):
-                            final_stats[s].extend([b_ref_valid[i] - b_maja_valid[i]])
+                    for s in range(samples):
+                        for i in range(len(b_maja_valid)):
+                            if b_maja_valid[i] >= (s * step - step / 2) and b_maja_valid[i] < (s * step + step / 2):
+                                final_stats[s].extend([b_ref_valid[i] - b_maja_valid[i]])
 
-            else:
-                logger.error("Length unmatch between %s and %s" % (bdef_acix[band_id][0], bdef_acix[band_id][1]))
+                else:
+                    logger.error("Length unmatch between %s and %s" % (bdef_acix[band_id][0], bdef_acix[band_id][1]))
+
+            except TypeError as err:
+                logger.warning("Got an error with product for %s between %s and %s" % (match[0], match[1], match[2]))
 
     x_sr   = np.arange(0, 1, step) - (step / 2)
     spec   = 0.005 + 0.05 * x_sr
