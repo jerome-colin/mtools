@@ -106,7 +106,7 @@ def main():
                     logger.error("Length unmatch between %s and %s" % (bdef_acix[band_id][0], bdef_acix[band_id][1]))
 
             except TypeError as err:
-                logger.warning("Got an error with product for %s between %s and %s" % (match[0], match[1], match[2]))
+                logger.warning("Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (match[0]))
 
     x_sr   = np.arange(0, 1, step) - (step / 2)
     spec   = 0.005 + 0.05 * x_sr
