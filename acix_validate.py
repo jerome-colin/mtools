@@ -31,8 +31,6 @@ def main():
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
     args = parser.parse_args()
 
-    # Create the logger
-    logger = utl.get_logger('acix_validate', args.verbose)
 
     # <maja_band>, <hdf_band>, <resolution>, <ref_samples>, <maja_samples>
     bdef_acix = (
@@ -48,6 +46,10 @@ def main():
         ["band12", "SRE_B12.", "R2", []])
 
     band_id = args.band
+
+    # Create the logger
+    logger = utl.get_logger('acix_validate_' + bdef_acix[band_id][0], args.verbose)
+
     if (band_id < 0 or band_id > len(bdef_acix)):
         logger.error("Band ID out of range with value %i" % band_id)
         sys.exit(3)
@@ -58,6 +60,8 @@ def main():
     final_stats = ([])
     for s in range(samples):
         final_stats.append([])
+
+    match_count = 0
 
     f = open(args.list, 'r')
     paths_list = f.read().splitlines()
@@ -91,11 +95,12 @@ def main():
                 del mask
 
                 if len(b_ref_valid) == len(b_maja_valid):
-
                     for s in range(samples):
                         for i in range(len(b_maja_valid)):
                             if b_maja_valid[i] >= (s * step - step / 2) and b_maja_valid[i] < (s * step + step / 2):
                                 final_stats[s].extend([b_ref_valid[i] - b_maja_valid[i]])
+
+                    match_count += 1
 
                 else:
                     logger.error("Length unmatch between %s and %s" % (bdef_acix[band_id][0], bdef_acix[band_id][1]))
@@ -139,9 +144,9 @@ def main():
     full_acix_u = utl.uncertainty(np.asarray(full_stats))
     full_n_sr = len(full_stats)
 
-    logger.info("RESULT, %s, %s, %i, %8.6f, %8.6f, %8.6f" %
-                 ("STACKED",
-                  bdef_acix[band_id][0],
+    logger.info("Stacked RESULT, %s, match_count=%i, samples=%i, A=%8.6f, P=%8.6f, U=%8.6f" %
+                 (bdef_acix[band_id][0],
+                  match_count,
                   full_n_sr,
                   full_acix_a,
                   full_acix_p,
@@ -149,11 +154,11 @@ def main():
 
     fig, ax1 = pl.subplots(figsize=(8, 8), dpi=300)
 
-    pl.title('%s \n A=%8.6f, P=%8.6f, U=%8.6f' % (bdef_acix[band_id][0], full_acix_a, full_acix_p, full_acix_u))
+    pl.title('%s nmatch=%i, samples=%i\n A=%8.6f, P=%8.6f, U=%8.6f' % (bdef_acix[band_id][0], match_count, full_n_sr, full_acix_a, full_acix_p, full_acix_u))
 
     pl.xlim(0,0.6)
     ax1.set_xlabel("Surface reflectance (-)")
-    ax1.set_ylim(0, 0.03)
+    ax1.set_ylim(-0.06, 0.06)
     ax1.plot(x_sr, acix_a, 'r-2', label='accuracy')
     ax1.plot(x_sr, acix_p, 'g-2', label='precision')
     ax1.plot(x_sr, acix_u, 'b-2', label='uncertainty')
