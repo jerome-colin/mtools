@@ -60,7 +60,7 @@ def get_logger(name, verbose=False):
     :return: logger object
     """
     logger = logging.getLogger(name)
-    logging_file = name + '_' + str(uuid.uuid4()) + '.log'
+    logging_file = name + '_' + str(uuid.uuid4())[0:8] + '.log'
     try:
         os.remove(logging_file)
     except FileNotFoundError:
