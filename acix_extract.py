@@ -54,7 +54,8 @@ def main():
         logger.error("Band ID out of range with value %i" % band_id)
         sys.exit(3)
 
-    final_stats = np.zeros((0))
+    final_ref = np.zeros((0))
+    final_maja = np.zeros((0))
 
     match_count = 0
     len_check = 0
@@ -91,19 +92,21 @@ def main():
                                     & (mask == 1)
                                     )
 
-                final_stats = np.append(final_stats, (b_ref[is_valid] - b_maja[is_valid]))
+                final_ref = np.append(final_ref, (b_ref[is_valid] ))
+                final_maja = np.append(final_maja, (b_maja[is_valid]))
+
                 match_count += 1
                 len_check += len(b_ref[is_valid])
 
             except TypeError as err:
                 logger.warning("Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (match[0]))
 
-    np.save(location_name, np.asarray(final_stats))
+    np.save(location_name, [final_ref, final_maja])
 
-    if len_check == len(final_stats):
+    if len_check == len(final_ref) and len_check == len(final_maja):
         logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
     else:
-        logger.error("Inconsistent sample len between len_check=%i and len(final_stats)=%i" % (len_check, len(final_stats)))
+        logger.error("Inconsistent sample len between len_check=%i and len(final_ref)=%i" % (len_check, len(final_ref)))
 
     sys.exit(0)
 
