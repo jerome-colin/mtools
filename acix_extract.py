@@ -101,7 +101,7 @@ def main():
             except TypeError as err:
                 logger.warning("Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (match[0]))
 
-    np.save(location_name + "_" + bdef_acix[band_id][0], [final_ref, final_maja])
+    np.save(location_name + "_" + bdef_acix[band_id][0], [final_ref.astype('float32'), final_maja.astype('float32')])
 
     if len_check == len(final_ref) and len_check == len(final_maja):
         logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
