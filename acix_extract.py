@@ -77,6 +77,7 @@ def main():
 
             try:
                 b_ref = p_ref.get_band(p_ref.find_band(bdef_acix[band_id][0]), scalef=p_ref.sre_scalef)
+                b_refqa = p_ref.get_band(p_ref.find_band("refqa"))
                 b_maja = p_maja.get_band(p_maja.find_band(bdef_acix[band_id][1]), scalef=p_maja.sre_scalef)
                 clm = p_maja.get_band(p_maja.find_band("CLM_" + bdef_acix[band_id][2]))
                 edg = p_maja.get_band(p_maja.find_band("EDG_" + bdef_acix[band_id][2]))
@@ -84,23 +85,15 @@ def main():
                 del clm
                 del edg
 
-                b_ref_valid = utl.is_valid(b_ref, mask)
-                logger.info("Negative reflectances in Ref counts %i samples" % (np.sum(b_ref_valid < 0)))
-                del b_ref
-                b_maja_valid = utl.is_valid(b_maja, mask)
-                logger.info("Negative reflectances in Maja counts %i samples" % (np.sum(b_maja_valid < 0)))
-                del b_maja
-                del mask
+                is_valid = np.where((b_ref >= 0)
+                                    & (b_maja >= 0)
+                                    & (b_refqa == 1)
+                                    & (mask == 1)
+                                    )
 
-                ref_is_positive = np.where(b_ref_valid >= 0)
-
-                if len(b_ref_valid) == len(b_maja_valid):
-                    final_stats = np.append(final_stats, b_ref_valid[ref_is_positive] - b_maja_valid[ref_is_positive])
-                    match_count += 1
-                    len_check += len(b_ref_valid[ref_is_positive])
-
-                else:
-                    logger.error("Length unmatch between %s and %s" % (bdef_acix[band_id][0], bdef_acix[band_id][1]))
+                final_stats = np.append(final_stats, (b_ref[is_valid] - b_maja[is_valid]))
+                match_count += 1
+                len_check += len(b_ref[is_valid])
 
             except TypeError as err:
                 logger.warning("Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (match[0]))
@@ -110,7 +103,7 @@ def main():
     if len_check == len(final_stats):
         logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
     else:
-        logger.error("Inconsistent sample len between len_check=%i and len(final_stats)=%i" % (len_check, len(b_ref_valid)))
+        logger.error("Inconsistent sample len between len_check=%i and len(final_stats)=%i" % (len_check, len(final_stats)))
 
     sys.exit(0)
 
