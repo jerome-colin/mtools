@@ -119,9 +119,9 @@ def main():
                     "Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (
                     match[0]))
 
-    np.save(location_name + "_" + bdef_acix[band_id][0], [final_ref.astype('float32'), final_maja.astype('float32')])
+    np.savez_compressed(location_name + "_" + bdef_acix[band_id][0], [final_ref.astype('float32'), final_maja.astype('float32')])
     if args.negative:
-        np.save(location_name + "_" + bdef_acix[band_id][0] + "_sr_lt_0", [neg_ref.astype('float32'), neg_maja.astype('float32')])
+        np.savez_compressed(location_name + "_" + bdef_acix[band_id][0] + "_sr_lt_0", [neg_ref.astype('float32'), neg_maja.astype('float32')])
 
     if len_check == len(final_ref) and len_check == len(final_maja):
         logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
