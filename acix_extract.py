@@ -30,6 +30,7 @@ def main():
                         action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
     parser.add_argument("--negative", help="Save sr lt 0", action="store_true", default=False)
+    parser.add_argument("--stack", help="Stack all sites in one file", action="store_true", default=False)
 
     args = parser.parse_args()
 
@@ -55,11 +56,11 @@ def main():
         logger.error("Band ID out of range with value %i" % band_id)
         sys.exit(3)
 
-    final_ref = np.zeros((0))
-    final_maja = np.zeros((0))
-
-    neg_ref = np.zeros((0))
-    neg_maja = np.zeros((0))
+    # vector containers for stacked data
+    v_stacked_valid_ref = np.zeros((0))
+    v_stacked_valid_maja = np.zeros((0))
+    v_stacked_lt0_ref = np.zeros((0))
+    v_stacked_lt0_maja = np.zeros((0))
 
     match_count = 0
     len_check = 0
@@ -70,6 +71,12 @@ def main():
     for p in paths_list:
         paths = p.split(',')
         location_name = paths[0].split('/')[-1]
+
+        # vector containers for location specific data
+        v_local_valid_ref = np.zeros((0))
+        v_local_valid_maja = np.zeros((0))
+        v_local_lt0_ref = np.zeros((0))
+        v_local_lt0_maja = np.zeros((0))
 
         acix_vermote_collection = clc.Collection(paths[0], logger)
         acix_maja_collection = clc.Collection(paths[1], logger)
@@ -82,51 +89,77 @@ def main():
 
             try:
                 b_ref = p_ref.get_band(p_ref.find_band(bdef_acix[band_id][0]), scalef=p_ref.sre_scalef)
-                b_refqa = p_ref.get_band(p_ref.find_band("refqa"))
+                m_ref_qa = p_ref.get_band(p_ref.find_band("refqa"))
                 b_maja = p_maja.get_band(p_maja.find_band(bdef_acix[band_id][1]), scalef=p_maja.sre_scalef)
                 clm = p_maja.get_band(p_maja.find_band("CLM_" + bdef_acix[band_id][2]))
                 edg = p_maja.get_band(p_maja.find_band("EDG_" + bdef_acix[band_id][2]))
-                mask, ratio = p_maja.get_mask(clm, edg, stats=True)
+                m_maja_qa, ratio = p_maja.get_mask(clm, edg, stats=True)
                 del clm
                 del edg
 
+                # default filter : any cloudfree flaged both by ref and maja and sr >= 0
                 is_valid = np.where(
                     (b_ref >= 0)
                     & (b_maja >= 0)
-                    & (b_refqa == 1)
-                    & (mask == 1)
+                    & (m_ref_qa == 1)
+                    & (m_maja_qa == 1)
                 )
 
                 if args.negative:
+                    # get sr < 0 though flaged cloudfree
                     is_cloudfree_but_negative = np.where(
-                        (mask == 1)
-                        & (b_refqa == 1)
+                        (m_maja_qa == 1)
+                        & (m_ref_qa == 1)
                         & ((b_maja < 0) | (b_ref < 0))
                     )
 
-                final_ref = np.append(final_ref, (b_ref[is_valid]))
-                final_maja = np.append(final_maja, (b_maja[is_valid]))
+                # stack local valid values for all timestamp matches
+                v_local_valid_ref = np.append(v_local_valid_ref, (b_ref[is_valid]))
+                v_local_valid_maja = np.append(v_local_valid_maja, (b_maja[is_valid]))
 
                 if args.negative:
-                    neg_ref = np.append(neg_ref, (b_ref[is_cloudfree_but_negative]))
-                    neg_maja = np.append(neg_maja, (b_maja[is_cloudfree_but_negative]))
+                    # stack local cloudfree negative sr for all timestamp matches
+                    v_local_lt0_ref = np.append(v_local_lt0_ref, (b_ref[is_cloudfree_but_negative]))
+                    v_local_lt0_maja = np.append(v_local_lt0_maja, (b_maja[is_cloudfree_but_negative]))
 
                 match_count += 1
                 len_check += len(b_ref[is_valid])
 
+                if args.stack:
+                    # if all locations have to be stacked in one single vector
+                    v_stacked_valid_ref = np.append(v_stacked_valid_ref, v_local_valid_ref)
+                    v_stacked_valid_maja = np.append(v_stacked_valid_maja, v_local_valid_maja)
+
+                    if args.negative:
+                        v_stacked_lt0_ref = np.append(v_stacked_lt0_ref, v_local_lt0_ref)
+                        v_stacked_lt0_maja = np.append(v_stacked_lt0_maja, v_local_lt0_maja)
+
+                else:
+                    # save local vectors in one compressed file
+                    np.savez_compressed(location_name + "_" + bdef_acix[band_id][0],
+                                        [v_local_valid_ref.astype('float32'), v_local_valid_maja.astype('float32')])
+                    if args.negative:
+                        np.savez_compressed(location_name + "_" + bdef_acix[band_id][0] + "_sr_lt_0",
+                                            [v_local_lt0_ref.astype('float32'), v_local_lt0_maja.astype('float32')])
+
             except TypeError as err:
                 logger.warning(
-                    "Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (
-                    match[0]))
+                    "Had to skip comparison for %s because of unexpected product dimension (see previous error)"
+                    % (match[0]))
 
-    np.savez_compressed(location_name + "_" + bdef_acix[band_id][0], [final_ref.astype('float32'), final_maja.astype('float32')])
-    if args.negative:
-        np.savez_compressed(location_name + "_" + bdef_acix[band_id][0] + "_sr_lt_0", [neg_ref.astype('float32'), neg_maja.astype('float32')])
+    if args.stack:
+        # if --stack, save stacked vector in one single compressed file
+        np.savez_compressed("Stacked_" + bdef_acix[band_id][0],
+                            [v_stacked_valid_ref.astype('float32'), v_stacked_valid_maja.astype('float32')])
+        if args.negative:
+            np.savez_compressed("Stacked_" + bdef_acix[band_id][0] + "_sr_lt_0",
+                                [v_stacked_lt0_ref.astype('float32'), v_stacked_lt0_maja.astype('float32')])
 
-    if len_check == len(final_ref) and len_check == len(final_maja):
-        logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
-    else:
-        logger.error("Inconsistent sample len between len_check=%i and len(final_ref)=%i" % (len_check, len(final_ref)))
+        if len_check == len(v_stacked_valid_ref) and len_check == len(v_stacked_valid_maja):
+            logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
+        else:
+            logger.error("Inconsistent sample len between len_check=%i and len(v_stacked_valid_ref)=%i"
+                         % (len_check, len(v_stacked_valid_ref)))
 
     sys.exit(0)
 
