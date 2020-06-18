@@ -10,7 +10,6 @@ __author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
 __version__ = "1.0.3"
 
-
 import sys
 import argparse
 import numpy as np
@@ -27,20 +26,22 @@ def main():
     parser.add_argument("list", help="List of paths of collection")
     parser.add_argument("--band", help="Specific band in acix band definition", type=int, required=True)
     parser.add_argument("--samples", help="Reflectance sampling, defaults to 100 (ie. 0.01)", type=int, default=100)
-    parser.add_argument("-s", "--save", help="Write location results as npy instead of stacking in memory", action="store_true", default=False)
+    parser.add_argument("-s", "--save", help="Write location results as npy instead of stacking in memory",
+                        action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
-    args = parser.parse_args()
+    parser.add_argument("--negative", help="Save sr lt 0", action="store_true", default=False)
 
+    args = parser.parse_args()
 
     # <maja_band>, <hdf_band>, <resolution>, <ref_samples>, <maja_samples>
     bdef_acix = (
-        ["band02", "SRE_B2.", "R1",  []],
-        ["band03", "SRE_B3.", "R1",  []],
-        ["band04", "SRE_B4.", "R1",  []],
-        ["band05", "SRE_B5.", "R2",  []],
-        ["band06", "SRE_B6.", "R2",  []],
-        ["band07", "SRE_B7.", "R2",  []],
-        ["band08", "SRE_B8.", "R1",  []],
+        ["band02", "SRE_B2.", "R1", []],
+        ["band03", "SRE_B3.", "R1", []],
+        ["band04", "SRE_B4.", "R1", []],
+        ["band05", "SRE_B5.", "R2", []],
+        ["band06", "SRE_B6.", "R2", []],
+        ["band07", "SRE_B7.", "R2", []],
+        ["band08", "SRE_B8.", "R1", []],
         ["band8a", "SRE_B8A.", "R2", []],
         ["band11", "SRE_B11.", "R2", []],
         ["band12", "SRE_B12.", "R2", []])
@@ -56,6 +57,9 @@ def main():
 
     final_ref = np.zeros((0))
     final_maja = np.zeros((0))
+
+    neg_ref = np.zeros((0))
+    neg_maja = np.zeros((0))
 
     match_count = 0
     len_check = 0
@@ -86,22 +90,38 @@ def main():
                 del clm
                 del edg
 
-                is_valid = np.where((b_ref >= 0)
-                                    & (b_maja >= 0)
-                                    & (b_refqa == 1)
-                                    & (mask == 1)
-                                    )
+                is_valid = np.where(
+                    (b_ref >= 0)
+                    & (b_maja >= 0)
+                    & (b_refqa == 1)
+                    & (mask == 1)
+                )
 
-                final_ref = np.append(final_ref, (b_ref[is_valid] ))
+                if args.negative:
+                    is_cloudfree_but_negative = np.where(
+                        (mask == 1)
+                        & (b_refqa == 1)
+                        & ((b_maja < 0) | (b_ref < 0))
+                    )
+
+                final_ref = np.append(final_ref, (b_ref[is_valid]))
                 final_maja = np.append(final_maja, (b_maja[is_valid]))
+
+                if args.negative:
+                    neg_ref = np.append(neg_ref, (b_ref[is_cloudfree_but_negative]))
+                    neg_maja = np.append(neg_maja, (b_maja[is_cloudfree_but_negative]))
 
                 match_count += 1
                 len_check += len(b_ref[is_valid])
 
             except TypeError as err:
-                logger.warning("Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (match[0]))
+                logger.warning(
+                    "Had to skip comparison for %s because of unexpected product dimension (see previous error)" % (
+                    match[0]))
 
     np.save(location_name + "_" + bdef_acix[band_id][0], [final_ref.astype('float32'), final_maja.astype('float32')])
+    if args.negative:
+        np.save(location_name + "_" + bdef_acix[band_id][0] + "_sr_lt_0", [neg_ref.astype('float32'), neg_maja.astype('float32')])
 
     if len_check == len(final_ref) and len_check == len(final_maja):
         logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
