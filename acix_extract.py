@@ -136,10 +136,10 @@ def main():
 
                 else:
                     # save local vectors in one compressed file
-                    np.savez_compressed(location_name + "_" + bdef_acix[band_id][0],
+                    np.savez_compressed(location_name + "_valid_" + bdef_acix[band_id][0],
                                         [v_local_valid_ref.astype('float32'), v_local_valid_maja.astype('float32')])
                     if args.negative:
-                        np.savez_compressed(location_name + "_" + bdef_acix[band_id][0] + "_sr_lt_0",
+                        np.savez_compressed(location_name + "__sr_lt_0_" + bdef_acix[band_id][0],
                                             [v_local_lt0_ref.astype('float32'), v_local_lt0_maja.astype('float32')])
 
             except TypeError as err:
@@ -149,10 +149,10 @@ def main():
 
     if args.stack:
         # if --stack, save stacked vector in one single compressed file
-        np.savez_compressed("Stacked_" + bdef_acix[band_id][0],
+        np.savez_compressed("Stacked_valid_" + bdef_acix[band_id][0],
                             [v_stacked_valid_ref.astype('float32'), v_stacked_valid_maja.astype('float32')])
         if args.negative:
-            np.savez_compressed("Stacked_" + bdef_acix[band_id][0] + "_sr_lt_0",
+            np.savez_compressed("Stacked_sr_lt_0_" + bdef_acix[band_id][0],
                                 [v_stacked_lt0_ref.astype('float32'), v_stacked_lt0_maja.astype('float32')])
 
         if len_check == len(v_stacked_valid_ref) and len_check == len(v_stacked_valid_maja):

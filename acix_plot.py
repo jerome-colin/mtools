@@ -7,18 +7,19 @@ import argparse
 def main():
     # Argument parser
     parser = argparse.ArgumentParser()
-    parser.add_argument("data", help="List of paths of collection")
-    parser.add_argument("--band", help="Specific band in acix band definition", type=str, required=True)
+    parser.add_argument("data", help="NPZ data file")
+    parser.add_argument("--band", help="Specific band in acix band definition", type=str, required=False)
     parser.add_argument("--samples", help="Reflectance sampling, defaults to 100 (ie. 0.01)", type=int, default=100)
-    parser.add_argument("-s", "--save", help="Write location results as npy instead of stacking in memory", action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
     args = parser.parse_args()
 
-    filename = "Carpentras.npy"
+    data = np.load(args.data)['arr_0']
+    if args.band is None:
+        band_name = args.data.split('_')[1].split('.')[0]
+    else:
+        band_name = args.band
 
-    data = np.load(args.data)
-    band_name = args.band
-    site_name = filename[:-4]
+    site_name = args.data[:-4]
 
     sr_ref = data[0]
     sr_maja = data[1]
@@ -41,13 +42,16 @@ def main():
         bin_sr_maja = sr_maja[is_in_range]
         bins_count[i] = len(bin_sr_ref)
 
-        acix_a[i] = utl.accuracy(bin_sr_ref - bin_sr_maja)
-        if bins_count[i] > 1:
-            acix_p[i] = utl.precision(bin_sr_ref - bin_sr_maja)
-        else:
-            acix_p[i] = 0
 
-        acix_u[i] = utl.uncertainty(bin_sr_ref - bin_sr_maja)
+        if bins_count[i] > 1:
+            acix_a[i] = utl.accuracy(bin_sr_ref - bin_sr_maja)
+            acix_p[i] = utl.precision(bin_sr_ref - bin_sr_maja)
+            acix_u[i] = utl.uncertainty(bin_sr_ref - bin_sr_maja)
+        else:
+            acix_a[i] = 0
+            acix_p[i] = 0
+            acix_u[i] = 0
+
 
         if args.verbose:
             print("From %4.2f to %4.2f: %i samples, A=%8.6f, P=%8.6f, U=%8.6f" % (bin_min, bin_max, bins_count[i], acix_a[i], acix_p[i], acix_u[i]))
@@ -60,7 +64,7 @@ def main():
 
     fig, ax1 = pl.subplots(figsize=(8, 8), dpi=300)
 
-    pl.title('%s: %s, samples=%i\n A=%8.6f, P=%8.6f, U=%8.6f' % (site_name, band_name, len(sr_ref), cumulated_acix_a, cumulated_acix_p, cumulated_acix_u))
+    pl.title('%s: samples=%i\n A=%8.6f, P=%8.6f, U=%8.6f' % (site_name, len(sr_ref), cumulated_acix_a, cumulated_acix_p, cumulated_acix_u))
 
     pl.xlim(0,0.5)
     ax1.set_xlabel("Surface reflectance (-)")
