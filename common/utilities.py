@@ -139,7 +139,18 @@ def precision(delta_sr):
     :return: Precision
     """
     acc = accuracy(delta_sr)
-    return np.sqrt((np.sum((delta_sr - acc) ** 2)) / (len(delta_sr) - 1))
+    unc = uncertainty(delta_sr)
+
+    # Mimics Vermote 'newcompapu'
+    pre = ((len(delta_sr))/(len(delta_sr) - 1)) * ((unc * unc) - (acc * acc))
+    if pre > 0:
+        return np.sqrt(pre)
+        #return np.sqrt((np.sum((delta_sr - acc) ** 2)) / (len(delta_sr) - 1))
+    else:
+        return 0
+
+    # Initial implementation from ACIX I APU paper (gives eq results)
+    #return np.sqrt((np.sum((delta_sr - acc) ** 2)) / (len(delta_sr) - 1))
 
 
 def rmse(v1, v2):
