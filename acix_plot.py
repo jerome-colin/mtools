@@ -48,9 +48,9 @@ def main():
             acix_p[i] = utl.precision(bin_sr_ref - bin_sr_maja)
             acix_u[i] = utl.uncertainty(bin_sr_ref - bin_sr_maja)
         else:
-            acix_a[i] = 0
-            acix_p[i] = 0
-            acix_u[i] = 0
+            acix_a[i] = np.nan
+            acix_p[i] = np.nan
+            acix_u[i] = np.nan
 
 
         if args.verbose:
