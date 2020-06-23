@@ -135,6 +135,7 @@ def main():
                 fig.subplots_adjust(top=0.88)
                 #pl.show()
                 pl.savefig(location_name + '_' + timestamp + '_quicklooks.png')
+                fig.close()
 
 
             except:
