@@ -211,6 +211,8 @@ class Product_dir_maja(Product):
                            "SRE_B12.", ]
 
         self.sre_scalef = 10000
+        self.aot_scalef = 200
+        self.vap_scalef = 20
         self.clm_name = "CLM_R1"
         self.edg_name = "EDG_R1"
 
