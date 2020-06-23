@@ -63,99 +63,79 @@ def main():
                 b_maja_b4 = p_maja.get_band(p_maja.find_band(bdef_acix[2][1]), scalef=p_maja.sre_scalef)
                 b_maja_b8 = p_maja.get_band(p_maja.find_band(bdef_acix[6][1]), scalef=p_maja.sre_scalef)
                 b_maja_aot = p_maja.get_band(p_maja.find_band("ATB_R1"), layer=1, scalef=p_maja.aot_scalef)
+                b_maja_vap = p_maja.get_band(p_maja.find_band("ATB_R1"), layer=0, scalef=p_maja.vap_scalef)
                 clm = p_maja.get_band(p_maja.find_band("CLM_" + bdef_acix[0][2]))
                 edg = p_maja.get_band(p_maja.find_band("EDG_" + bdef_acix[0][2]))
                 m_maja_qa, ratio = p_maja.get_mask(clm, edg, stats=True)
 
-                fig, axs = pl.subplots(nrows=2, ncols=3, figsize=[18, 12])
+                fig, axs = pl.subplots(nrows=3, ncols=3, figsize=[12, 12])
+                fig.suptitle(location_name + ' ' + timestamp[0:4] + '-' + timestamp[4:6] + '-' + timestamp[6:8], fontsize=16)
+
                 cset_true = axs[0, 0].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
-                axs[0, 0].set_title("%s %s (B4,B3,B2)" % (location_name, timestamp))
+                axs[0, 0].set_title("Quicklook (B4, B3, B2)")
+                cset_maja_cloud_contour = axs[0, 0].contour(m_maja_qa)
+                #axs[0, 0].clabel(cset_maja_cloud_contour, inline=1, fontsize=10)
 
-                cset_false = axs[1, 0].imshow(np.dstack((b_maja_b8*gain_false, b_maja_b3*gain_false, b_maja_b2*gain_false)), interpolation='none', aspect='equal')
-                axs[1, 0].set_title("%s %s (B8,B3,B2)" % (location_name, timestamp))
 
-                cset_maja_qa = axs[0, 1].imshow(m_maja_qa, interpolation='none', aspect='equal', vmin=0, vmax=1)
-                axs[0, 1].set_title("Maja QA (cloud=0, clear=1)")
+                cset_maja_qa = axs[1, 0].imshow(m_maja_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
+                axs[1, 0].set_title("Maja QA (cloud=0, clear=1)")
+                divider = make_axes_locatable(axs[1, 0])
+                cax = divider.append_axes("right", size="5%", pad=0.05)
+                pl.colorbar(cset_maja_qa, cax=cax)  # , orientation='horizontal')
+
+                cset_ref_qa = axs[2, 0].imshow(m_ref_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
+                axs[2, 0].set_title("Reference QA")
+                divider = make_axes_locatable(axs[2, 0])
+                cax = divider.append_axes("right", size="5%", pad=0.05)
+                pl.colorbar(cset_ref_qa, cax=cax)  # , orientation='horizontal')
+
+                # cset_false = axs[0, 1].imshow(np.dstack((b_maja_b8*gain_false, b_maja_b3*gain_false, b_maja_b2*gain_false)), interpolation='none', aspect='equal')
+                # axs[0, 1].set_title("%s %s (B8,B3,B2)" % (location_name, timestamp))
+
+                cset_maja_vap = axs[0, 1].imshow(b_maja_vap, interpolation='none', aspect='equal', cmap='RdBu')
+                axs[0, 1].set_title("Maja VAP")
                 divider = make_axes_locatable(axs[0, 1])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_qa, cax=cax)  # , orientation='horizontal')
+                pl.colorbar(cset_maja_vap, cax=cax)#, orientation='horizontal')
 
-                cset_ref_qa = axs[1, 1].imshow(m_ref_qa, interpolation='none', aspect='equal', vmin=0, vmax=1)
-                axs[1, 1].set_title("Reference QA")
-                divider = make_axes_locatable(axs[1, 1])
-                cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_qa, cax=cax)  # , orientation='horizontal')
+                # cset_maja_vap = axs[0, 1].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
+                # axs[0, 1].set_title("Maja VAP")
+                # divider = make_axes_locatable(axs[0, 1])
+                # cax = divider.append_axes("right", size="5%", pad=0.05)
+                # pl.colorbar(cset_maja_vap, cax=cax)  # , orientation='horizontal')
+                # cset_maja_vap_contour = axs[0, 1].contour(b_maja_vap)
+                # axs[0, 1].clabel(cset_maja_vap_contour, inline=1, fontsize=10)
 
-                cset_maja_aot = axs[0, 2].imshow(b_maja_aot, interpolation='none', aspect='equal')
+                cset_maja_aot = axs[0, 2].imshow(b_maja_aot, cmap='Wistia')
+                axs[0, 2].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
                 axs[0, 2].set_title("Maja AOT")
                 divider = make_axes_locatable(axs[0, 2])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_aot, cax=cax)#, orientation='horizontal')
-
-                axs[1, 2].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
-                axs[1, 2].set_title("Maja AOT")
-                divider = make_axes_locatable(axs[1, 2])
-                cax = divider.append_axes("right", size="5%", pad=0.05)
                 pl.colorbar(cset_maja_aot, cax=cax)  # , orientation='horizontal')
-                cset_maja_aot_contour = axs[1, 2].contour(b_maja_aot)
-                axs[1, 2].clabel(cset_maja_aot_contour, inline=1, fontsize=10)
+                cset_maja_aot_contour = axs[0, 2].contour(b_maja_aot, cmap='Wistia')
+                axs[0, 2].clabel(cset_maja_aot_contour, inline=1, fontsize=10)
 
+                # B2
+                axs[1, 1].hist(b_ref_b2.flatten(), bins=256, histtype='step', log=True)
+                axs[1, 1].hist(b_maja_b2.flatten(), bins=256, histtype='step', log=True)
+                axs[1, 1].set_title("B2 (blue=Ref, orange=Maja)")
+                # B3
+                axs[1, 2].hist(b_ref_b3.flatten(), bins=256, histtype='step', log=True)
+                axs[1, 2].hist(b_maja_b3.flatten(), bins=256, histtype='step', log=True)
+                axs[1, 2].set_title("B3 (blue=Ref, orange=Maja)")
+                # B4
+                axs[2, 1].hist(b_ref_b4.flatten(), bins=256, histtype='step', log=True)
+                axs[2, 1].hist(b_maja_b4.flatten(), bins=256, histtype='step', log=True)
+                axs[2, 1].set_title("B4 (blue=Ref, orange=Maja)")
+                # B8
+                axs[2, 2].hist(b_ref_b8.flatten(), bins=256, histtype='step', log=True)
+                axs[2, 2].hist(b_maja_b8.flatten(), bins=256, histtype='step', log=True)
+                axs[2, 2].set_title("B8 (blue=Ref, orange=Maja)")
                 fig.tight_layout()
+                fig.subplots_adjust(top=0.88)
                 #pl.show()
                 pl.savefig(location_name + '_' + timestamp + '_quicklooks.png')
 
-                # Band histograms
-                fig, axs = pl.subplots(nrows=2, ncols=2, figsize=[18,12])
-                # B2
-                axs[0, 0].hist(b_ref_b2.flatten(), bins=256, histtype='step', log=True)
-                axs[0, 0].hist(b_maja_b2.flatten(), bins=256, histtype='step', log=True)
-                axs[0, 0].set_title("%s %s B2: $Ref_{min}$=%6.4f, $Ref_{max}$=%6.4f, "
-                                    "$Maja_{min}$=%6.4f, $Maja_{max}$=%6.4f"
-                                    % (location_name,
-                                       timestamp,
-                                       b_ref_b2.flatten().min(),
-                                       b_ref_b2.flatten().max(),
-                                       b_maja_b2.flatten().min(),
-                                       b_maja_b2.flatten().max())
-                                    )
-                # B3
-                axs[1, 0].hist(b_ref_b3.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 0].hist(b_maja_b3.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 0].set_title("%s %s B3: $Ref_{min}$=%6.4f, $Ref_{max}$=%6.4f, "
-                                    "$Maja_{min}$=%6.4f, $Maja_{max}$=%6.4f"
-                                    % (location_name,
-                                       timestamp,
-                                       b_ref_b3.flatten().min(),
-                                       b_ref_b3.flatten().max(),
-                                       b_maja_b3.flatten().min(),
-                                       b_maja_b3.flatten().max())
-                                    )
-                # B4
-                axs[0, 1].hist(b_ref_b4.flatten(), bins=256, histtype='step', log=True)
-                axs[0, 1].hist(b_maja_b4.flatten(), bins=256, histtype='step', log=True)
-                axs[0, 1].set_title("%s %s B4: $Ref_{min}$=%6.4f, $Ref_{max}$=%6.4f, "
-                                    "$Maja_{min}$=%6.4f, $Maja_{max}$=%6.4f"
-                                    % (location_name,
-                                       timestamp,
-                                       b_ref_b4.flatten().min(),
-                                       b_ref_b4.flatten().max(),
-                                       b_maja_b4.flatten().min(),
-                                       b_maja_b4.flatten().max())
-                                    )
-                # B8
-                axs[1, 1].hist(b_ref_b8.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 1].hist(b_maja_b8.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 1].set_title("%s %s B8: $Ref_{min}$=%6.4f, $Ref_{max}$=%6.4f, "
-                                    "$Maja_{min}$=%6.4f, $Maja_{max}$=%6.4f"
-                                    % (location_name,
-                                       timestamp,
-                                       b_ref_b8.flatten().min(),
-                                       b_ref_b8.flatten().max(),
-                                       b_maja_b8.flatten().min(),
-                                       b_maja_b8.flatten().max())
-                                    )
-                fig.tight_layout()
-                pl.savefig(location_name + '_' + timestamp + '_hist.png')
 
             except:
                 e = sys.exc_info()
