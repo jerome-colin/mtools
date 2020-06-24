@@ -99,8 +99,8 @@ def main():
 
                 # default filter : any cloudfree flaged both by ref and maja and sr >= 0
                 is_valid = np.where(
-                    (b_ref >= 0)
-                    & (b_maja >= 0)
+                    (b_ref > 0)
+                    & (b_maja > 0)
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
