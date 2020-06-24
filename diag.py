@@ -116,21 +116,53 @@ def main():
                 axs[0, 2].clabel(cset_maja_aot_contour, inline=1, fontsize=10)
 
                 # B2
-                axs[1, 1].hist(b_ref_b2.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 1].hist(b_maja_b2.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 1].set_title("B2 (blue=Ref, orange=Maja)")
+                is_valid = np.where(
+                    (b_ref_b2 > 0)
+                    & (b_maja_b2 > 0)
+                    & (m_ref_qa == 1)
+                    & (m_maja_qa == 1)
+                )
+                axs[1, 1].hist(b_ref_b2[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
+                axs[1, 1].hist(b_maja_b2[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
+                axs[1, 1].set_title("B2 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b2[is_valid].flatten(), b_maja_b2[is_valid].flatten()))
+                axs[1, 1].legend()
+
                 # B3
-                axs[1, 2].hist(b_ref_b3.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 2].hist(b_maja_b3.flatten(), bins=256, histtype='step', log=True)
-                axs[1, 2].set_title("B3 (blue=Ref, orange=Maja)")
+                is_valid = np.where(
+                    (b_ref_b3 > 0)
+                    & (b_maja_b3 > 0)
+                    & (m_ref_qa == 1)
+                    & (m_maja_qa == 1)
+                )
+                axs[1, 2].hist(b_ref_b3[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[1, 2].hist(b_maja_b3[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[1, 2].set_title("B3 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b3[is_valid].flatten(), b_maja_b3[is_valid].flatten()))
+                axs[1, 2].legend()
+
                 # B4
-                axs[2, 1].hist(b_ref_b4.flatten(), bins=256, histtype='step', log=True)
-                axs[2, 1].hist(b_maja_b4.flatten(), bins=256, histtype='step', log=True)
-                axs[2, 1].set_title("B4 (blue=Ref, orange=Maja)")
+                is_valid = np.where(
+                    (b_ref_b4 > 0)
+                    & (b_maja_b4 > 0)
+                    & (m_ref_qa == 1)
+                    & (m_maja_qa == 1)
+                )
+                axs[2, 1].hist(b_ref_b4[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[2, 1].hist(b_maja_b4[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[2, 1].set_title("B4 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b4[is_valid].flatten(), b_maja_b4[is_valid].flatten()))
+                axs[2, 1].legend()
+
                 # B8
-                axs[2, 2].hist(b_ref_b8.flatten(), bins=256, histtype='step', log=True)
-                axs[2, 2].hist(b_maja_b8.flatten(), bins=256, histtype='step', log=True)
-                axs[2, 2].set_title("B8 (blue=Ref, orange=Maja)")
+                is_valid = np.where(
+                    (b_ref_b8 > 0)
+                    & (b_maja_b8 > 0)
+                    & (m_ref_qa == 1)
+                    & (m_maja_qa == 1)
+                )
+                axs[2, 2].hist(b_ref_b8[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[2, 2].hist(b_maja_b8[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[2, 2].set_title("B8 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b8[is_valid].flatten(), b_maja_b8[is_valid].flatten()))
+                axs[2, 2].legend()
+                
                 fig.tight_layout()
                 fig.subplots_adjust(top=0.88)
                 #pl.show()
