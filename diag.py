@@ -93,7 +93,7 @@ def main():
                 # axs[0, 1].set_title("%s %s (B8,B3,B2)" % (location_name, timestamp))
 
                 cset_maja_vap = axs[0, 1].imshow(b_maja_vap, interpolation='none', aspect='equal', cmap='RdBu')
-                axs[0, 1].set_title("Maja VAP")
+                axs[0, 1].set_title("Maja VAP $(g.cm^{-2})$")
                 divider = make_axes_locatable(axs[0, 1])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
                 pl.colorbar(cset_maja_vap, cax=cax)#, orientation='horizontal')
@@ -108,7 +108,7 @@ def main():
 
                 cset_maja_aot = axs[0, 2].imshow(b_maja_aot, cmap='Wistia')
                 axs[0, 2].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
-                axs[0, 2].set_title("Maja AOT")
+                axs[0, 2].set_title("Maja AOT $(-)$")
                 divider = make_axes_locatable(axs[0, 2])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
                 pl.colorbar(cset_maja_aot, cax=cax)  # , orientation='horizontal')
