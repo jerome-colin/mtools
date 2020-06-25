@@ -134,8 +134,8 @@ def main():
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
-                axs[1, 2].hist(b_ref_b3[is_valid].flatten(), bins=256, histtype='step', log=True)
-                axs[1, 2].hist(b_maja_b3[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[1, 2].hist(b_ref_b3[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
+                axs[1, 2].hist(b_maja_b3[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
                 axs[1, 2].set_title("B3 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b3[is_valid].flatten(), b_maja_b3[is_valid].flatten()))
                 axs[1, 2].legend()
 
@@ -146,8 +146,8 @@ def main():
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
-                axs[2, 1].hist(b_ref_b4[is_valid].flatten(), bins=256, histtype='step', log=True)
-                axs[2, 1].hist(b_maja_b4[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[2, 1].hist(b_ref_b4[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
+                axs[2, 1].hist(b_maja_b4[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
                 axs[2, 1].set_title("B4 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b4[is_valid].flatten(), b_maja_b4[is_valid].flatten()))
                 axs[2, 1].legend()
 
@@ -158,8 +158,8 @@ def main():
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
-                axs[2, 2].hist(b_ref_b8[is_valid].flatten(), bins=256, histtype='step', log=True)
-                axs[2, 2].hist(b_maja_b8[is_valid].flatten(), bins=256, histtype='step', log=True)
+                axs[2, 2].hist(b_ref_b8[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
+                axs[2, 2].hist(b_maja_b8[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
                 axs[2, 2].set_title("B8 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b8[is_valid].flatten(), b_maja_b8[is_valid].flatten()))
                 axs[2, 2].legend()
                 
