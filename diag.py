@@ -78,13 +78,13 @@ def main():
 
 
                 cset_maja_qa = axs[1, 0].imshow(m_maja_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
-                axs[1, 0].set_title("Maja QA (cloud=0, clear=1)")
+                axs[1, 0].set_title("Maja CLM & EDG (valid=1)")
                 divider = make_axes_locatable(axs[1, 0])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
                 pl.colorbar(cset_maja_qa, cax=cax)  # , orientation='horizontal')
 
                 cset_ref_qa = axs[2, 0].imshow(m_ref_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
-                axs[2, 0].set_title("Reference QA")
+                axs[2, 0].set_title("Reference QA (valid=1)")
                 divider = make_axes_locatable(axs[2, 0])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
                 pl.colorbar(cset_ref_qa, cax=cax)  # , orientation='horizontal')
