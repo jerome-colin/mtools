@@ -96,7 +96,7 @@ def main():
                 axs[0, 1].set_title("Maja VAP $(g.cm^{-2})$")
                 divider = make_axes_locatable(axs[0, 1])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_vap, cax=cax)#, orientation='horizontal')
+                pl.colorbar(cset_maja_vap, cax=cax, format='%4.2f')#, orientation='horizontal')
 
                 # cset_maja_vap = axs[0, 1].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
                 # axs[0, 1].set_title("Maja VAP")
@@ -111,7 +111,7 @@ def main():
                 axs[0, 2].set_title("Maja AOT $(-)$")
                 divider = make_axes_locatable(axs[0, 2])
                 cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_aot, cax=cax)  # , orientation='horizontal')
+                pl.colorbar(cset_maja_aot, cax=cax, format='%4.2f')  # , orientation='horizontal')
                 cset_maja_aot_contour = axs[0, 2].contour(b_maja_aot, cmap='Wistia')
                 axs[0, 2].clabel(cset_maja_aot_contour, inline=1, fontsize=10)
 
@@ -122,8 +122,22 @@ def main():
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
-                axs[1, 1].hist(b_ref_b2[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
-                axs[1, 1].hist(b_maja_b2[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
+                axs[1, 1].hist(b_ref_b2[is_valid].flatten(),
+                               bins=200,
+                               histtype='step',
+                               log=False,
+                               label='Ref',
+                               range=(0, 1),
+                               density=False
+                               )
+                axs[1, 1].hist(b_maja_b2[is_valid].flatten(),
+                               bins=200,
+                               histtype='step',
+                               log=False,
+                               label='Maja',
+                               range=(0, 1),
+                               density=False
+                               )
                 axs[1, 1].set_title("B2 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b2[is_valid].flatten(), b_maja_b2[is_valid].flatten()))
                 axs[1, 1].legend()
 
@@ -134,8 +148,8 @@ def main():
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
-                axs[1, 2].hist(b_ref_b3[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
-                axs[1, 2].hist(b_maja_b3[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
+                axs[1, 2].hist(b_ref_b3[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
+                axs[1, 2].hist(b_maja_b3[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
                 axs[1, 2].set_title("B3 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b3[is_valid].flatten(), b_maja_b3[is_valid].flatten()))
                 axs[1, 2].legend()
 
@@ -146,8 +160,8 @@ def main():
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
-                axs[2, 1].hist(b_ref_b4[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
-                axs[2, 1].hist(b_maja_b4[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
+                axs[2, 1].hist(b_ref_b4[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
+                axs[2, 1].hist(b_maja_b4[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
                 axs[2, 1].set_title("B4 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b4[is_valid].flatten(), b_maja_b4[is_valid].flatten()))
                 axs[2, 1].legend()
 
@@ -158,8 +172,8 @@ def main():
                     & (m_ref_qa == 1)
                     & (m_maja_qa == 1)
                 )
-                axs[2, 2].hist(b_ref_b8[is_valid].flatten(), bins=256, histtype='step', log=True, label='Ref')
-                axs[2, 2].hist(b_maja_b8[is_valid].flatten(), bins=256, histtype='step', log=True, label='Maja')
+                axs[2, 2].hist(b_ref_b8[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
+                axs[2, 2].hist(b_maja_b8[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
                 axs[2, 2].set_title("B8 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b8[is_valid].flatten(), b_maja_b8[is_valid].flatten()))
                 axs[2, 2].legend()
                 
