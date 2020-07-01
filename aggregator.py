@@ -34,7 +34,7 @@ def main():
         control_ref += len(sr_ref)
         control_maja += len(sr_maja)
 
-    np.savez_compressed("Stacked.npz", [sr_ref, sr_maja])
+    np.savez_compressed("Stacked_" + args.band + ".npz", [sr_ref, sr_maja])
     print("Final length of sr_ref is %i (ctrl is %i)" % (len(sr_ref), control_ref))
     print("Final length of sr_maja is %i (ctrl is %i)" % (len(sr_maja), control_maja))
     print("Completed with %i files..." % count)
