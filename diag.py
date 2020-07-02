@@ -182,7 +182,7 @@ def main():
                     fig.tight_layout()
                     fig.subplots_adjust(top=0.88)
                     #pl.show()
-                    pl.savefig(location_name + '_' + timestamp + '_quicklooks.png')
+                    pl.savefig(location_name + '_' + timestamp + '_All_quicklooks.png')
                     pl.close('all')
 
                 else:
@@ -199,7 +199,7 @@ def main():
 
                         #fig.tight_layout()
                         # pl.show()
-                        pl.savefig(location_name + '_' + timestamp + '_Maja_quicklooks" + .png')
+                        pl.savefig(location_name + '_' + timestamp + '_Maja_quicklooks.png')
                         pl.close('all')
 
                         fig, axs = pl.subplots(figsize=[12, 12])
