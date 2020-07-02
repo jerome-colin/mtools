@@ -14,6 +14,7 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument("list", help="List of paths of collection")
     parser.add_argument("--saveto", help="subdirectory to save figs to", type=str)
+    parser.add_argument("--all", help="Display quicklooks with histograms", action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
 
     args = parser.parse_args()
@@ -68,120 +69,155 @@ def main():
                 edg = p_maja.get_band(p_maja.find_band("EDG_" + bdef_acix[0][2]))
                 m_maja_qa, ratio = p_maja.get_mask(clm, edg, stats=True)
 
-                fig, axs = pl.subplots(nrows=3, ncols=3, figsize=[12, 12])
-                fig.suptitle(location_name + ' ' + timestamp[0:4] + '-' + timestamp[4:6] + '-' + timestamp[6:8], fontsize=16)
+                if args.all:
+                    fig, axs = pl.subplots(nrows=3, ncols=3, figsize=[12, 12])
+                    fig.suptitle(location_name + ' ' + timestamp[0:4] + '-' + timestamp[4:6] + '-' + timestamp[6:8], fontsize=16)
 
-                cset_true = axs[0, 0].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
-                axs[0, 0].set_title("Quicklook (B4, B3, B2)")
-                cset_maja_cloud_contour = axs[0, 0].contour(m_maja_qa)
-                #axs[0, 0].clabel(cset_maja_cloud_contour, inline=1, fontsize=10)
+                    cset_true = axs[0, 0].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
+                    axs[0, 0].set_title("Quicklook (B4, B3, B2)")
+                    cset_maja_cloud_contour = axs[0, 0].contour(m_maja_qa)
+                    #axs[0, 0].clabel(cset_maja_cloud_contour, inline=1, fontsize=10)
 
 
-                cset_maja_qa = axs[1, 0].imshow(m_maja_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
-                axs[1, 0].set_title("Maja CLM & EDG (valid=1)")
-                divider = make_axes_locatable(axs[1, 0])
-                cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_qa, cax=cax)  # , orientation='horizontal')
+                    cset_maja_qa = axs[1, 0].imshow(m_maja_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
+                    axs[1, 0].set_title("Maja CLM & EDG (valid=1)")
+                    divider = make_axes_locatable(axs[1, 0])
+                    cax = divider.append_axes("right", size="5%", pad=0.05)
+                    pl.colorbar(cset_maja_qa, cax=cax)  # , orientation='horizontal')
 
-                cset_ref_qa = axs[2, 0].imshow(m_ref_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
-                axs[2, 0].set_title("Reference QA (valid=1)")
-                divider = make_axes_locatable(axs[2, 0])
-                cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_ref_qa, cax=cax)  # , orientation='horizontal')
+                    cset_ref_qa = axs[2, 0].imshow(m_ref_qa, interpolation='none', aspect='equal', vmin=0, vmax=1, cmap='gray')
+                    axs[2, 0].set_title("Reference QA (valid=1)")
+                    divider = make_axes_locatable(axs[2, 0])
+                    cax = divider.append_axes("right", size="5%", pad=0.05)
+                    pl.colorbar(cset_ref_qa, cax=cax)  # , orientation='horizontal')
 
-                # cset_false = axs[0, 1].imshow(np.dstack((b_maja_b8*gain_false, b_maja_b3*gain_false, b_maja_b2*gain_false)), interpolation='none', aspect='equal')
-                # axs[0, 1].set_title("%s %s (B8,B3,B2)" % (location_name, timestamp))
+                    # cset_false = axs[0, 1].imshow(np.dstack((b_maja_b8*gain_false, b_maja_b3*gain_false, b_maja_b2*gain_false)), interpolation='none', aspect='equal')
+                    # axs[0, 1].set_title("%s %s (B8,B3,B2)" % (location_name, timestamp))
 
-                cset_maja_vap = axs[0, 1].imshow(b_maja_vap, interpolation='none', aspect='equal', cmap='RdBu')
-                axs[0, 1].set_title("Maja VAP $(g.cm^{-2})$")
-                divider = make_axes_locatable(axs[0, 1])
-                cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_vap, cax=cax, format='%4.2f')#, orientation='horizontal')
+                    cset_maja_vap = axs[0, 1].imshow(b_maja_vap, interpolation='none', aspect='equal', cmap='RdBu')
+                    axs[0, 1].set_title("Maja VAP $(g.cm^{-2})$")
+                    divider = make_axes_locatable(axs[0, 1])
+                    cax = divider.append_axes("right", size="5%", pad=0.05)
+                    pl.colorbar(cset_maja_vap, cax=cax, format='%4.2f')#, orientation='horizontal')
 
-                # cset_maja_vap = axs[0, 1].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
-                # axs[0, 1].set_title("Maja VAP")
-                # divider = make_axes_locatable(axs[0, 1])
-                # cax = divider.append_axes("right", size="5%", pad=0.05)
-                # pl.colorbar(cset_maja_vap, cax=cax)  # , orientation='horizontal')
-                # cset_maja_vap_contour = axs[0, 1].contour(b_maja_vap)
-                # axs[0, 1].clabel(cset_maja_vap_contour, inline=1, fontsize=10)
+                    # cset_maja_vap = axs[0, 1].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
+                    # axs[0, 1].set_title("Maja VAP")
+                    # divider = make_axes_locatable(axs[0, 1])
+                    # cax = divider.append_axes("right", size="5%", pad=0.05)
+                    # pl.colorbar(cset_maja_vap, cax=cax)  # , orientation='horizontal')
+                    # cset_maja_vap_contour = axs[0, 1].contour(b_maja_vap)
+                    # axs[0, 1].clabel(cset_maja_vap_contour, inline=1, fontsize=10)
 
-                cset_maja_aot = axs[0, 2].imshow(b_maja_aot, cmap='Wistia')
-                axs[0, 2].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
-                axs[0, 2].set_title("Maja AOT $(-)$")
-                divider = make_axes_locatable(axs[0, 2])
-                cax = divider.append_axes("right", size="5%", pad=0.05)
-                pl.colorbar(cset_maja_aot, cax=cax, format='%4.2f')  # , orientation='horizontal')
-                cset_maja_aot_contour = axs[0, 2].contour(b_maja_aot, cmap='Wistia')
-                axs[0, 2].clabel(cset_maja_aot_contour, inline=1, fontsize=10)
+                    cset_maja_aot = axs[0, 2].imshow(b_maja_aot, cmap='Wistia')
+                    axs[0, 2].imshow(np.dstack((b_maja_b4*gain_true, b_maja_b3*gain_true, b_maja_b2*gain_true)), interpolation='none', aspect='equal')
+                    axs[0, 2].set_title("Maja AOT $(-)$")
+                    divider = make_axes_locatable(axs[0, 2])
+                    cax = divider.append_axes("right", size="5%", pad=0.05)
+                    pl.colorbar(cset_maja_aot, cax=cax, format='%4.2f')  # , orientation='horizontal')
+                    cset_maja_aot_contour = axs[0, 2].contour(b_maja_aot, cmap='Wistia')
+                    axs[0, 2].clabel(cset_maja_aot_contour, inline=1, fontsize=10)
 
-                # B2
-                is_valid = np.where(
-                    (b_ref_b2 > 0)
-                    & (b_maja_b2 > 0)
-                    & (m_ref_qa == 1)
-                    & (m_maja_qa == 1)
-                )
-                axs[1, 1].hist(b_ref_b2[is_valid].flatten(),
-                               bins=200,
-                               histtype='step',
-                               log=False,
-                               label='Ref',
-                               range=(0, 1),
-                               density=False
-                               )
-                axs[1, 1].hist(b_maja_b2[is_valid].flatten(),
-                               bins=200,
-                               histtype='step',
-                               log=False,
-                               label='Maja',
-                               range=(0, 1),
-                               density=False
-                               )
-                axs[1, 1].set_title("B2 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b2[is_valid].flatten(), b_maja_b2[is_valid].flatten()))
-                axs[1, 1].legend()
+                    # B2
+                    is_valid = np.where(
+                        (b_ref_b2 > 0)
+                        & (b_maja_b2 > 0)
+                        & (m_ref_qa == 1)
+                        & (m_maja_qa == 1)
+                    )
+                    axs[1, 1].hist(b_ref_b2[is_valid].flatten(),
+                                   bins=200,
+                                   histtype='step',
+                                   log=False,
+                                   label='Ref',
+                                   range=(0, 1),
+                                   density=False
+                                   )
+                    axs[1, 1].hist(b_maja_b2[is_valid].flatten(),
+                                   bins=200,
+                                   histtype='step',
+                                   log=False,
+                                   label='Maja',
+                                   range=(0, 1),
+                                   density=False
+                                   )
+                    axs[1, 1].set_title("B2 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b2[is_valid].flatten(), b_maja_b2[is_valid].flatten()))
+                    axs[1, 1].legend()
 
-                # B3
-                is_valid = np.where(
-                    (b_ref_b3 > 0)
-                    & (b_maja_b3 > 0)
-                    & (m_ref_qa == 1)
-                    & (m_maja_qa == 1)
-                )
-                axs[1, 2].hist(b_ref_b3[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
-                axs[1, 2].hist(b_maja_b3[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
-                axs[1, 2].set_title("B3 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b3[is_valid].flatten(), b_maja_b3[is_valid].flatten()))
-                axs[1, 2].legend()
+                    # B3
+                    is_valid = np.where(
+                        (b_ref_b3 > 0)
+                        & (b_maja_b3 > 0)
+                        & (m_ref_qa == 1)
+                        & (m_maja_qa == 1)
+                    )
+                    axs[1, 2].hist(b_ref_b3[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
+                    axs[1, 2].hist(b_maja_b3[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
+                    axs[1, 2].set_title("B3 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b3[is_valid].flatten(), b_maja_b3[is_valid].flatten()))
+                    axs[1, 2].legend()
 
-                # B4
-                is_valid = np.where(
-                    (b_ref_b4 > 0)
-                    & (b_maja_b4 > 0)
-                    & (m_ref_qa == 1)
-                    & (m_maja_qa == 1)
-                )
-                axs[2, 1].hist(b_ref_b4[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
-                axs[2, 1].hist(b_maja_b4[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
-                axs[2, 1].set_title("B4 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b4[is_valid].flatten(), b_maja_b4[is_valid].flatten()))
-                axs[2, 1].legend()
+                    # B4
+                    is_valid = np.where(
+                        (b_ref_b4 > 0)
+                        & (b_maja_b4 > 0)
+                        & (m_ref_qa == 1)
+                        & (m_maja_qa == 1)
+                    )
+                    axs[2, 1].hist(b_ref_b4[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
+                    axs[2, 1].hist(b_maja_b4[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
+                    axs[2, 1].set_title("B4 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b4[is_valid].flatten(), b_maja_b4[is_valid].flatten()))
+                    axs[2, 1].legend()
 
-                # B8
-                is_valid = np.where(
-                    (b_ref_b8 > 0)
-                    & (b_maja_b8 > 0)
-                    & (m_ref_qa == 1)
-                    & (m_maja_qa == 1)
-                )
-                axs[2, 2].hist(b_ref_b8[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
-                axs[2, 2].hist(b_maja_b8[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
-                axs[2, 2].set_title("B8 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b8[is_valid].flatten(), b_maja_b8[is_valid].flatten()))
-                axs[2, 2].legend()
-                
-                fig.tight_layout()
-                fig.subplots_adjust(top=0.88)
-                #pl.show()
-                pl.savefig(location_name + '_' + timestamp + '_quicklooks.png')
-                pl.close('all')
+                    # B8
+                    is_valid = np.where(
+                        (b_ref_b8 > 0)
+                        & (b_maja_b8 > 0)
+                        & (m_ref_qa == 1)
+                        & (m_maja_qa == 1)
+                    )
+                    axs[2, 2].hist(b_ref_b8[is_valid].flatten(), bins=200, histtype='step', log=False, label='Ref', range=(0, 1))
+                    axs[2, 2].hist(b_maja_b8[is_valid].flatten(), bins=200, histtype='step', log=False, label='Maja', range=(0, 1))
+                    axs[2, 2].set_title("B8 (QA=1 & sr>0) RMSE=%8.6f" % utl.rmse(b_ref_b8[is_valid].flatten(), b_maja_b8[is_valid].flatten()))
+                    axs[2, 2].legend()
+
+                    fig.tight_layout()
+                    fig.subplots_adjust(top=0.88)
+                    #pl.show()
+                    pl.savefig(location_name + '_' + timestamp + '_quicklooks.png')
+                    pl.close('all')
+
+                else:
+                    try:
+                        fig, axs = pl.subplots(figsize=[12, 12])
+                        pl.title(location_name + ' ' + timestamp[0:4] + '-' + timestamp[4:6] + '-' + timestamp[6:8],
+                                     fontsize=16)
+
+                        axs.imshow(
+                            np.dstack((b_maja_b4 * gain_true, b_maja_b3 * gain_true, b_maja_b2 * gain_true)),
+                            interpolation='none', aspect='equal')
+                        axs.set_title("MAJA Quicklook (B4, B3, B2)")
+                        axs.contour(m_maja_qa)
+
+                        #fig.tight_layout()
+                        # pl.show()
+                        pl.savefig(location_name + '_' + timestamp + '_Maja_quicklooks" + .png')
+                        pl.close('all')
+
+                        fig, axs = pl.subplots(figsize=[12, 12])
+                        pl.title(location_name + ' ' + timestamp[0:4] + '-' + timestamp[4:6] + '-' + timestamp[6:8],
+                                 fontsize=16)
+
+                        axs.imshow(
+                            np.dstack((b_ref_b4 * gain_true, b_ref_b3 * gain_true, b_ref_b2 * gain_true)),
+                            interpolation='none', aspect='equal')
+                        axs.set_title("REF Quicklook (B4, B3, B2)")
+                        axs.contour(m_ref_qa)
+
+                        # fig.tight_layout()
+                        # pl.show()
+                        pl.savefig(location_name + '_' + timestamp + '_Ref_quicklooks.png')
+                        pl.close('all')
+                    except:
+                        print(sys.exc_info())
 
 
             except:
