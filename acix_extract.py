@@ -158,8 +158,12 @@ def main():
                     np.savez_compressed(location_name + "_valid_" + bdef_acix[band_id][0],
                                         [v_local_valid_ref.astype('float32'), v_local_valid_maja.astype('float32')])
                     if args.negative:
-                        np.savez_compressed(location_name + "__sr_lt_0_" + bdef_acix[band_id][0],
+                        np.savez_compressed(location_name + "_sr_lt_0_" + bdef_acix[band_id][0],
                                             [v_local_lt0_ref.astype('float32'), v_local_lt0_maja.astype('float32')])
+
+                    if args.keepall:
+                        np.savez_compressed(location_name + "_keep_all_" + bdef_acix[band_id][0],
+                                            [v_local_keep_all_ref.astype('float32'), v_local_keep_all_maja.astype('float32')])
 
             except TypeError as err:
                 logger.warning(
