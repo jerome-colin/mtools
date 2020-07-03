@@ -133,8 +133,8 @@ def main():
                     v_local_lt0_maja = np.append(v_local_lt0_maja, (b_maja[is_cloudfree_but_negative]))
 
                 if args.keepall:
-                    v_local_keep_all_ref = np.append(v_local_lt0_ref, (b_ref[is_cloudfree_but_negative]))
-                    v_local_keep_all_maja = np.append(v_local_lt0_maja, (b_maja[is_cloudfree_but_negative]))
+                    v_local_keep_all_ref = np.append(v_local_lt0_ref, (b_ref[is_cloudfree_keep_all]))
+                    v_local_keep_all_maja = np.append(v_local_lt0_maja, (b_maja[is_cloudfree_keep_all]))
 
 
                 match_count += 1
