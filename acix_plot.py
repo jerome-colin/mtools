@@ -44,9 +44,9 @@ def main():
 
 
         if bins_count[i] > 1:
-            acix_a[i] = utl.accuracy(bin_sr_ref - bin_sr_maja)
-            acix_p[i] = utl.precision(bin_sr_ref - bin_sr_maja)
-            acix_u[i] = utl.uncertainty(bin_sr_ref - bin_sr_maja)
+            acix_a[i] = utl.accuracy(bin_sr_maja - bin_sr_ref)
+            acix_p[i] = utl.precision(bin_sr_maja - bin_sr_ref)
+            acix_u[i] = utl.uncertainty(bin_sr_maja - bin_sr_ref)
         else:
             acix_a[i] = np.nan
             acix_p[i] = np.nan
@@ -56,9 +56,9 @@ def main():
         if args.verbose:
             print("From %4.2f to %4.2f: %i samples, A=%8.6f, P=%8.6f, U=%8.6f" % (bin_min, bin_max, bins_count[i], acix_a[i], acix_p[i], acix_u[i]))
 
-    cumulated_acix_a = utl.accuracy(sr_ref - sr_maja)
-    cumulated_acix_p = utl.precision(sr_ref - sr_maja)
-    cumulated_acix_u = utl.uncertainty(sr_ref - sr_maja)
+    cumulated_acix_a = utl.accuracy(sr_maja - sr_ref)
+    cumulated_acix_p = utl.precision(sr_maja - sr_ref)
+    cumulated_acix_u = utl.uncertainty(sr_maja - sr_ref)
     x_sr = np.arange(0, 1, step) - (step / 2)
     spec = 0.005 + 0.05 * x_sr
 
