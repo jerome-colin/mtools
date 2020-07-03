@@ -155,8 +155,9 @@ def main():
 
                 else:
                     # save local vectors in one compressed file
-                    np.savez_compressed(location_name + "_valid_" + bdef_acix[band_id][0],
-                                        [v_local_valid_ref.astype('float32'), v_local_valid_maja.astype('float32')])
+                    if not args.keepall:
+                        np.savez_compressed(location_name + "_valid_" + bdef_acix[band_id][0],
+                                            [v_local_valid_ref.astype('float32'), v_local_valid_maja.astype('float32')])
                     if args.negative:
                         np.savez_compressed(location_name + "_sr_lt_0_" + bdef_acix[band_id][0],
                                             [v_local_lt0_ref.astype('float32'), v_local_lt0_maja.astype('float32')])
