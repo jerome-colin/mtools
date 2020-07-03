@@ -30,6 +30,7 @@ def main():
                         action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
     parser.add_argument("--negative", help="Save sr lt 0", action="store_true", default=False)
+    parser.add_argument("--keepall", help="Keep sr <= 0 but cloudfree", action="store_true", default=False)
     parser.add_argument("--stack", help="Stack all sites in one file", action="store_true", default=False)
 
     args = parser.parse_args()
@@ -61,6 +62,8 @@ def main():
     v_stacked_valid_maja = np.zeros((0))
     v_stacked_lt0_ref = np.zeros((0))
     v_stacked_lt0_maja = np.zeros((0))
+    v_stacked_keep_all_ref = np.zeros((0))
+    v_stacked_keep_all_maja = np.zeros((0))
 
     match_count = 0
     len_check = 0
@@ -113,6 +116,13 @@ def main():
                         & ((b_maja < 0) | (b_ref < 0))
                     )
 
+                if args.keepall:
+                    # get sr < 0 though flaged cloudfree
+                    is_cloudfree_keep_all = np.where(
+                        (m_maja_qa == 1)
+                        & (m_ref_qa == 1)
+                    )
+
                 # stack local valid values for all timestamp matches
                 v_local_valid_ref = np.append(v_local_valid_ref, (b_ref[is_valid]))
                 v_local_valid_maja = np.append(v_local_valid_maja, (b_maja[is_valid]))
@@ -121,6 +131,11 @@ def main():
                     # stack local cloudfree negative sr for all timestamp matches
                     v_local_lt0_ref = np.append(v_local_lt0_ref, (b_ref[is_cloudfree_but_negative]))
                     v_local_lt0_maja = np.append(v_local_lt0_maja, (b_maja[is_cloudfree_but_negative]))
+
+                if args.keepall:
+                    v_local_keep_all_ref = np.append(v_local_lt0_ref, (b_ref[is_cloudfree_but_negative]))
+                    v_local_keep_all_maja = np.append(v_local_lt0_maja, (b_maja[is_cloudfree_but_negative]))
+
 
                 match_count += 1
                 len_check += len(b_ref[is_valid])
@@ -133,6 +148,10 @@ def main():
                     if args.negative:
                         v_stacked_lt0_ref = np.append(v_stacked_lt0_ref, v_local_lt0_ref)
                         v_stacked_lt0_maja = np.append(v_stacked_lt0_maja, v_local_lt0_maja)
+
+                    if args.keepall:
+                        v_stacked_keep_all_ref = np.append(v_stacked_keep_all_ref, v_local_keep_all_ref)
+                        v_stacked_keep_all_maja = np.append(v_stacked_keep_all_maja, v_local_keep_all_maja)
 
                 else:
                     # save local vectors in one compressed file
@@ -154,6 +173,10 @@ def main():
         if args.negative:
             np.savez_compressed("Stacked_sr_lt_0_" + bdef_acix[band_id][0],
                                 [v_stacked_lt0_ref.astype('float32'), v_stacked_lt0_maja.astype('float32')])
+
+        if args.keepall:
+            np.savez_compressed("Stacked_sr_keep_all_" + bdef_acix[band_id][0],
+                                [v_stacked_keep_all_ref.astype('float32'), v_stacked_keep_all_maja.astype('float32')])
 
         if len_check == len(v_stacked_valid_ref) and len_check == len(v_stacked_valid_maja):
             logger.info("Saved %i samples to %s.npy" % (len_check, location_name))
