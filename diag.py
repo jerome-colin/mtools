@@ -44,6 +44,9 @@ def main():
         paths = p.split(',')
         location_name = paths[0].split('/')[-1]
 
+        if args.keepall:
+            location_stats = []
+
         acix_vermote_collection = clc.Collection(paths[0], logger)
         acix_maja_collection = clc.Collection(paths[1], logger)
         compare = cmp.Comparison(acix_vermote_collection, acix_maja_collection, logger)
@@ -134,6 +137,9 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
+                        sr_b2_is_valid_count = len(is_valid)
+                        negative_sr_ref_b2_count = len(np.where(b_ref_b2[is_valid] < 0))
+                        negative_sr_maja_b2_count = len(np.where(b_maja_b2[is_valid] < 0))
 
                     else:
                         is_valid = np.where(
@@ -178,6 +184,9 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
+                        sr_b3_is_valid_count = len(is_valid)
+                        negative_sr_ref_b3_count = len(np.where(b_ref_b3[is_valid] < 0))
+                        negative_sr_maja_b3_count = len(np.where(b_maja_b3[is_valid] < 0))
 
                     else:
                         is_valid = np.where(
@@ -220,6 +229,9 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
+                        sr_b4_is_valid_count = len(is_valid)
+                        negative_sr_ref_b4_count = len(np.where(b_ref_b4[is_valid] < 0))
+                        negative_sr_maja_b4_count = len(np.where(b_maja_b4[is_valid] < 0))
 
                     else:
                         is_valid = np.where(
@@ -262,6 +274,9 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
+                        sr_b8_is_valid_count = len(is_valid)
+                        negative_sr_ref_b8_count = len(np.where(b_ref_b8[is_valid] < 0))
+                        negative_sr_maja_b8_count = len(np.where(b_maja_b8[is_valid] < 0))
 
                     else:
                         is_valid = np.where(
@@ -297,6 +312,12 @@ def main():
                     #pl.show()
                     pl.savefig(location_name + '_' + timestamp + '_All_quicklooks.png')
                     pl.close('all')
+
+                    if args.keepall:
+                        location_stats = location_stats.append(location_name,
+                                                               sr_b2_is_valid_count, sr_b3_is_valid_count, sr_b4_is_valid_count, sr_b8_is_valid_count,
+                                                               negative_sr_ref_b2_count, negative_sr_ref_b3_count, negative_sr_ref_b4_count, negative_sr_ref_b8_count,
+                                                               negative_sr_maja_b2_count, negative_sr_maja_b3_count, negative_sr_maja_b4_count, negative_sr_maja_b8_count)
 
                 else:
                     try:
@@ -337,7 +358,22 @@ def main():
                 e = sys.exc_info()
                 logger.error(e)
 
+    location_stats_count = 0
+    location_stats_count_found_negative = 0
+    for l in location_stats:
+        logger.info(location_stats[l])
+        location_stats_count += 1
+        if ((negative_sr_ref_b2_count > 0) or (negative_sr_ref_b3_count > 0) or (negative_sr_ref_b4_count > 0) or (negative_sr_ref_b8_count > 0)):
+            location_stats_count +=1
+            logger.info("%s: b2_ratio=%8.6f, b3_ratio=%8.6f, b4_ratio=%8.6f, b8_ratio=%8.6f"
+                        % (location_stats[l][0],
+                           location_stats[l][5]/location_stats[l][1],
+                           location_stats[l][6] / location_stats[l][2],
+                           location_stats[l][7] / location_stats[l][3],
+                           location_stats[l][8] / location_stats[l][4]
+                           ))
 
+    logger.info("Found negative location count = %i" % location_stats_count_found_negative)
 
 
 
