@@ -137,9 +137,12 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
-                        sr_b2_is_valid_count = len(is_valid)
-                        negative_sr_ref_b2_count = len(np.where(b_ref_b2[is_valid] < 0))
-                        negative_sr_maja_b2_count = len(np.where(b_maja_b2[is_valid] < 0))
+                        b_ref_b2_is_valid_count = len(b_ref_b2[is_valid].flatten())
+                        search = np.where(b_ref_b2[is_valid] < 0)
+                        b_ref_b2_is_valid_and_lt0_count = len(b_ref_b2[is_valid][search].flatten())
+                        search = np.where(b_maja_b2[is_valid] < 0)
+                        b_maja_b2_is_valid_and_lt0_count = len(b_maja_b2[is_valid][search].flatten())
+                        #print("valid_b2=%i, ref_b2_neg=%i, maja_b2_neg=%i" % (b_ref_b2_is_valid_count, b_ref_b2_is_valid_and_lt0_count, b_maja_b2_is_valid_and_lt0_count))
 
                     else:
                         is_valid = np.where(
@@ -184,9 +187,13 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
-                        sr_b3_is_valid_count = len(is_valid)
-                        negative_sr_ref_b3_count = len(np.where(b_ref_b3[is_valid] < 0))
-                        negative_sr_maja_b3_count = len(np.where(b_maja_b3[is_valid] < 0))
+                        b_ref_b3_is_valid_count = len(b_ref_b3[is_valid].flatten())
+                        search = np.where(b_ref_b3[is_valid] < 0)
+                        b_ref_b3_is_valid_and_lt0_count = len(b_ref_b3[is_valid][search].flatten())
+                        search = np.where(b_maja_b3[is_valid] < 0)
+                        b_maja_b3_is_valid_and_lt0_count = len(b_maja_b3[is_valid][search].flatten())
+                        #print("valid_b3=%i, ref_b3_neg=%i, maja_b3_neg=%i" % (
+                        #b_ref_b3_is_valid_count, b_ref_b3_is_valid_and_lt0_count, b_maja_b3_is_valid_and_lt0_count))
 
                     else:
                         is_valid = np.where(
@@ -229,9 +236,13 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
-                        sr_b4_is_valid_count = len(is_valid)
-                        negative_sr_ref_b4_count = len(np.where(b_ref_b4[is_valid] < 0))
-                        negative_sr_maja_b4_count = len(np.where(b_maja_b4[is_valid] < 0))
+                        b_ref_b4_is_valid_count = len(b_ref_b4[is_valid].flatten())
+                        search = np.where(b_ref_b4[is_valid] < 0)
+                        b_ref_b4_is_valid_and_lt0_count = len(b_ref_b4[is_valid][search].flatten())
+                        search = np.where(b_maja_b4[is_valid] < 0)
+                        b_maja_b4_is_valid_and_lt0_count = len(b_maja_b4[is_valid][search].flatten())
+                        #print("valid_b4=%i, ref_b4_neg=%i, maja_b4_neg=%i" % (
+                        #b_ref_b4_is_valid_count, b_ref_b4_is_valid_and_lt0_count, b_maja_b4_is_valid_and_lt0_count))
 
                     else:
                         is_valid = np.where(
@@ -274,9 +285,13 @@ def main():
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
-                        sr_b8_is_valid_count = len(is_valid)
-                        negative_sr_ref_b8_count = len(np.where(b_ref_b8[is_valid] < 0))
-                        negative_sr_maja_b8_count = len(np.where(b_maja_b8[is_valid] < 0))
+                        b_ref_b8_is_valid_count = len(b_ref_b8[is_valid].flatten())
+                        search = np.where(b_ref_b8[is_valid] < 0)
+                        b_ref_b8_is_valid_and_lt0_count = len(b_ref_b8[is_valid][search].flatten())
+                        search = np.where(b_maja_b8[is_valid] < 0)
+                        b_maja_b8_is_valid_and_lt0_count = len(b_maja_b8[is_valid][search].flatten())
+                        #print("valid_b8=%i, ref_b8_neg=%i, maja_b8_neg=%i" % (
+                        #b_ref_b8_is_valid_count, b_ref_b8_is_valid_and_lt0_count, b_maja_b8_is_valid_and_lt0_count))
 
                     else:
                         is_valid = np.where(
@@ -314,10 +329,10 @@ def main():
                     pl.close('all')
 
                     if args.keepall:
-                        location_stats = location_stats.append(location_name,
-                                                               sr_b2_is_valid_count, sr_b3_is_valid_count, sr_b4_is_valid_count, sr_b8_is_valid_count,
-                                                               negative_sr_ref_b2_count, negative_sr_ref_b3_count, negative_sr_ref_b4_count, negative_sr_ref_b8_count,
-                                                               negative_sr_maja_b2_count, negative_sr_maja_b3_count, negative_sr_maja_b4_count, negative_sr_maja_b8_count)
+                        location_stats = location_stats + [[location_name + timestamp,
+                                                               b_ref_b2_is_valid_count, b_ref_b3_is_valid_count, b_ref_b4_is_valid_count, b_ref_b8_is_valid_count,
+                                                               b_ref_b2_is_valid_and_lt0_count, b_ref_b3_is_valid_and_lt0_count, b_ref_b4_is_valid_and_lt0_count, b_ref_b8_is_valid_and_lt0_count,
+                                                               b_maja_b2_is_valid_and_lt0_count, b_maja_b3_is_valid_and_lt0_count, b_maja_b4_is_valid_and_lt0_count, b_maja_b8_is_valid_and_lt0_count]]
 
                 else:
                     try:
@@ -360,20 +375,28 @@ def main():
 
     location_stats_count = 0
     location_stats_count_found_negative = 0
-    for l in location_stats:
-        logger.info(location_stats[l])
+    location_stats_count_found_negative_10prc = 0
+    for l in range(len(location_stats)):
         location_stats_count += 1
-        if ((negative_sr_ref_b2_count > 0) or (negative_sr_ref_b3_count > 0) or (negative_sr_ref_b4_count > 0) or (negative_sr_ref_b8_count > 0)):
-            location_stats_count +=1
-            logger.info("%s: b2_ratio=%8.6f, b3_ratio=%8.6f, b4_ratio=%8.6f, b8_ratio=%8.6f"
-                        % (location_stats[l][0],
-                           location_stats[l][5]/location_stats[l][1],
-                           location_stats[l][6] / location_stats[l][2],
-                           location_stats[l][7] / location_stats[l][3],
-                           location_stats[l][8] / location_stats[l][4]
-                           ))
+        if (location_stats[l][1] > 0) or (location_stats[l][2] > 0) or (location_stats[l][3] > 0) or (location_stats[l][4] > 0):
+            location_stats_count_found_negative +=1
 
-    logger.info("Found negative location count = %i" % location_stats_count_found_negative)
+            logger.info("STATS: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                        % (location_stats[l][0],
+                           location_stats[l][5], location_stats[l][1],
+                           location_stats[l][6], location_stats[l][2],
+                           location_stats[l][7], location_stats[l][3],
+                           location_stats[l][8], location_stats[l][4]
+                           ))
+            if (location_stats[l][5] > 81000) or (location_stats[l][6] > 81000) or (location_stats[l][7] > 81000) or (location_stats[l][8] > 81000):
+                location_stats_count_found_negative_10prc +=1
+
+    logger.info("STATS: Tested %i location and timestamps" % location_stats_count)
+    logger.info("STATS: Found %i datasets with sr_ref < 0" % location_stats_count_found_negative)
+    logger.info("STATS:  from which %i datasets with more than 10 percent of sr_ref < 0" % location_stats_count_found_negative_10prc)
+
+    print(location_stats_count, location_stats_count_found_negative, location_stats_count_found_negative_10prc)
+    print(location_stats)
 
 
 
