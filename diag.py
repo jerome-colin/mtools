@@ -23,6 +23,9 @@ def main():
     gain_true = 3.
     gain_false = 2.5
 
+    if args.keepall:
+        l_stats = []
+
     # Create the logger
     logger = utl.get_logger('Diag', args.verbose)
 
@@ -44,9 +47,6 @@ def main():
     for p in paths_list:
         paths = p.split(',')
         location_name = paths[0].split('/')[-1]
-
-        if args.keepall:
-            location_stats = []
 
         acix_vermote_collection = clc.Collection(paths[0], logger)
         acix_maja_collection = clc.Collection(paths[1], logger)
@@ -340,7 +340,7 @@ def main():
                     pl.close('all')
 
                     if args.keepall:
-                        location_stats = location_stats + [[location_name + timestamp,
+                        l_stats = l_stats + [[location_name + timestamp,
                                                             b_ref_b2_is_valid_count, b_ref_b3_is_valid_count,
                                                             b_ref_b4_is_valid_count, b_ref_b8_is_valid_count,
                                                             b_ref_b2_is_valid_and_lt0_count,
@@ -391,52 +391,52 @@ def main():
                 e = sys.exc_info()
                 logger.error(e)
 
-    location_stats_count = 0
-    location_stats_count_found_negative = 0
-    location_stats_count_found_negative_10prc = 0
-    location_stats_count_found_negative_05prc = 0
-    location_stats_count_found_negative_025prc = 0
-    location_stats_count_found_negative_gt_10prc = 0
+    b_ref_stats_dataset_count = 0
+    b_ref_stats_dataset_with_any_sr_lt0_count = 0
+    b_ref_stats_dataset_with_atmost_025prc_sr_lt0_count = 0
+    b_ref_stats_dataset_with_atmost_05prc_sr_lt0_count = 0
+    b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count = 0
+    b_ref_stats_dataset_with_morethan_10prc_sr_lt0_count = 0
 
-    for l in range(len(location_stats)):
-        location_stats_count += 1
-        if (location_stats[l][1] > 0) or (location_stats[l][2] > 0) or (location_stats[l][3] > 0) or (
-                location_stats[l][4] > 0):
-            location_stats_count_found_negative += 1
+    for l in range(len(l_stats)):
+        b_ref_stats_dataset_count += 1
+        if (l_stats[l][1] > 0) or (l_stats[l][2] > 0) or (l_stats[l][3] > 0) or (
+                l_stats[l][4] > 0):
+            b_ref_stats_dataset_with_any_sr_lt0_count += 1
 
             logger.info("STATS: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
-                        % (location_stats[l][0],
-                           location_stats[l][5], location_stats[l][1],
-                           location_stats[l][6], location_stats[l][2],
-                           location_stats[l][7], location_stats[l][3],
-                           location_stats[l][8], location_stats[l][4]
+                        % (l_stats[l][0],
+                           l_stats[l][5], l_stats[l][1],
+                           l_stats[l][6], l_stats[l][2],
+                           l_stats[l][7], l_stats[l][3],
+                           l_stats[l][8], l_stats[l][4]
                            ))
 
-            if max(location_stats[l][5], location_stats[l][6], location_stats[l][7], location_stats[l][8]) <= 20250:
-                location_stats_count_found_negative_025prc += 1
+            if max(l_stats[l][5], l_stats[l][6], l_stats[l][7], l_stats[l][8]) <= 20250:
+                b_ref_stats_dataset_with_atmost_025prc_sr_lt0_count += 1
 
-            elif max(location_stats[l][5], location_stats[l][6], location_stats[l][7], location_stats[l][8]) <= 40500:
-                location_stats_count_found_negative_05prc += 1
+            elif max(l_stats[l][5], l_stats[l][6], l_stats[l][7], l_stats[l][8]) <= 40500:
+                b_ref_stats_dataset_with_atmost_05prc_sr_lt0_count += 1
 
-            elif max(location_stats[l][5], location_stats[l][6], location_stats[l][7], location_stats[l][8]) <= 81000:
-                location_stats_count_found_negative_10prc += 1
+            elif max(l_stats[l][5], l_stats[l][6], l_stats[l][7], l_stats[l][8]) <= 81000:
+                b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count += 1
 
             else:
-                location_stats_count_found_negative_gt_10prc += 1
+                b_ref_stats_dataset_with_morethan_10prc_sr_lt0_count += 1
 
-    logger.info("STATS: Tested %i location and timestamps" % location_stats_count)
-    logger.info("STATS: Found %i datasets with sr_ref < 0" % location_stats_count_found_negative)
+    logger.info("STATS: Tested %i location and timestamps" % b_ref_stats_dataset_count)
+    logger.info("STATS: Found %i datasets with sr_ref < 0" % b_ref_stats_dataset_with_any_sr_lt0_count)
     logger.info(
-        "STATS:     %i datasets with at most 2.5%% of sr_ref < 0" % location_stats_count_found_negative_025prc)
+        "STATS:     %i datasets with at most 2.5%% of sr_ref < 0" % b_ref_stats_dataset_with_atmost_025prc_sr_lt0_count)
     logger.info(
-        "STATS:     %i datasets with 2.5%% to 5%% of sr_ref < 0" % location_stats_count_found_negative_05prc)
+        "STATS:     %i datasets with 2.5%% to 5%% of sr_ref < 0" % b_ref_stats_dataset_with_atmost_05prc_sr_lt0_count)
     logger.info(
-        "STATS:     %i datasets with 5%% to 10%% of sr_ref < 0" % location_stats_count_found_negative_10prc)
+        "STATS:     %i datasets with 5%% to 10%% of sr_ref < 0" % b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count)
     logger.info(
-        "STATS:     %i datasets with more than 10%% of sr_ref < 0" % location_stats_count_found_negative_gt_10prc)
+        "STATS:     %i datasets with more than 10%% of sr_ref < 0" % b_ref_stats_dataset_with_morethan_10prc_sr_lt0_count)
 
-    print(location_stats_count, location_stats_count_found_negative, location_stats_count_found_negative_10prc)
-    print(location_stats)
+    print(b_ref_stats_dataset_count, b_ref_stats_dataset_with_any_sr_lt0_count, b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count)
+    print(l_stats)
 
     sys.exit(0)
 
