@@ -391,40 +391,119 @@ def main():
                 e = sys.exc_info()
                 logger.error(e)
 
-    b_ref_stats_dataset_count = 0
+    b_common_stats_dataset_count = 0
+    
     b_ref_stats_dataset_with_any_sr_lt0_count = 0
     b_ref_stats_dataset_with_atmost_025prc_sr_lt0_count = 0
     b_ref_stats_dataset_with_atmost_05prc_sr_lt0_count = 0
     b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count = 0
     b_ref_stats_dataset_with_morethan_10prc_sr_lt0_count = 0
 
+    b_maja_stats_dataset_with_any_sr_lt0_count = 0
+    b_maja_stats_dataset_with_atmost_025prc_sr_lt0_count = 0
+    b_maja_stats_dataset_with_atmost_05prc_sr_lt0_count = 0
+    b_maja_stats_dataset_with_atmost_10prc_sr_lt0_count = 0
+    b_maja_stats_dataset_with_morethan_10prc_sr_lt0_count = 0
+    
     for l in range(len(l_stats)):
-        b_ref_stats_dataset_count += 1
+        b_common_stats_dataset_count += 1
         if (l_stats[l][5] > 0) or (l_stats[l][6] > 0) or (l_stats[l][7] > 0) or (
                 l_stats[l][8] > 0):
             b_ref_stats_dataset_with_any_sr_lt0_count += 1
 
-            logger.info("STATS: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
-                        % (l_stats[l][0],
-                           l_stats[l][5], l_stats[l][1],
-                           l_stats[l][6], l_stats[l][2],
-                           l_stats[l][7], l_stats[l][3],
-                           l_stats[l][8], l_stats[l][4]
-                           ))
+            # logger.info("STATS: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+            #             % (l_stats[l][0],
+            #                l_stats[l][5], l_stats[l][1],
+            #                l_stats[l][6], l_stats[l][2],
+            #                l_stats[l][7], l_stats[l][3],
+            #                l_stats[l][8], l_stats[l][4]
+            #                ))
 
             if max(l_stats[l][5], l_stats[l][6], l_stats[l][7], l_stats[l][8]) <= 20250:
-                b_ref_stats_dataset_with_atmost_025prc_sr_lt0_count += 1
+                 logger.info("STATS REF_LT025: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                             % (l_stats[l][0],
+                                l_stats[l][5], l_stats[l][1],
+                                l_stats[l][6], l_stats[l][2],
+                                l_stats[l][7], l_stats[l][3],
+                                l_stats[l][8], l_stats[l][4]
+                                ))
+                 b_ref_stats_dataset_with_atmost_025prc_sr_lt0_count += 1
 
             elif max(l_stats[l][5], l_stats[l][6], l_stats[l][7], l_stats[l][8]) <= 40500:
+                logger.info("STATS REF_LT05: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                            % (l_stats[l][0],
+                               l_stats[l][5], l_stats[l][1],
+                               l_stats[l][6], l_stats[l][2],
+                               l_stats[l][7], l_stats[l][3],
+                               l_stats[l][8], l_stats[l][4]
+                               ))
                 b_ref_stats_dataset_with_atmost_05prc_sr_lt0_count += 1
 
             elif max(l_stats[l][5], l_stats[l][6], l_stats[l][7], l_stats[l][8]) <= 81000:
                 b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count += 1
+                logger.info("STATS REF_LT10: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                            % (l_stats[l][0],
+                               l_stats[l][5], l_stats[l][1],
+                               l_stats[l][6], l_stats[l][2],
+                               l_stats[l][7], l_stats[l][3],
+                               l_stats[l][8], l_stats[l][4]
+                               ))
 
             else:
                 b_ref_stats_dataset_with_morethan_10prc_sr_lt0_count += 1
+                logger.info("STATS REF_GT10: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                            % (l_stats[l][0],
+                               l_stats[l][5], l_stats[l][1],
+                               l_stats[l][6], l_stats[l][2],
+                               l_stats[l][7], l_stats[l][3],
+                               l_stats[l][8], l_stats[l][4]
+                               ))
+                
+        if (l_stats[l][9] > 0) or (l_stats[l][10] > 0) or (l_stats[l][11] > 0) or (
+                l_stats[l][12] > 0):
+            b_maja_stats_dataset_with_any_sr_lt0_count += 1
 
-    logger.info("STATS: Tested %i location and timestamps" % b_ref_stats_dataset_count)
+            if max(l_stats[l][9], l_stats[l][10], l_stats[l][11], l_stats[l][12]) <= 20250:
+                 logger.info("STATS MAJA_LT025: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                             % (l_stats[l][0],
+                                l_stats[l][9], l_stats[l][1],
+                                l_stats[l][10], l_stats[l][2],
+                                l_stats[l][11], l_stats[l][3],
+                                l_stats[l][12], l_stats[l][4]
+                                ))
+                 b_maja_stats_dataset_with_atmost_025prc_sr_lt0_count += 1
+
+            elif max(l_stats[l][9], l_stats[l][10], l_stats[l][11], l_stats[l][12]) <= 40500:
+                logger.info("STATS LT05: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                            % (l_stats[l][0],
+                               l_stats[l][9], l_stats[l][1],
+                               l_stats[l][10], l_stats[l][2],
+                               l_stats[l][11], l_stats[l][3],
+                               l_stats[l][12], l_stats[l][4]
+                               ))
+                b_maja_stats_dataset_with_atmost_05prc_sr_lt0_count += 1
+
+            elif max(l_stats[l][9], l_stats[l][10], l_stats[l][11], l_stats[l][12]) <= 81000:
+                b_maja_stats_dataset_with_atmost_10prc_sr_lt0_count += 1
+                logger.info("STATS LT10: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                            % (l_stats[l][0],
+                               l_stats[l][9], l_stats[l][1],
+                               l_stats[l][10], l_stats[l][2],
+                               l_stats[l][11], l_stats[l][3],
+                               l_stats[l][12], l_stats[l][4]
+                               ))
+
+            else:
+                b_maja_stats_dataset_with_morethan_10prc_sr_lt0_count += 1
+                logger.info("STATS GT10: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
+                            % (l_stats[l][0],
+                               l_stats[l][9], l_stats[l][1],
+                               l_stats[l][10], l_stats[l][2],
+                               l_stats[l][11], l_stats[l][3],
+                               l_stats[l][12], l_stats[l][4]
+                               ))
+
+    logger.info("STATS: Tested %i location and timestamps" % b_common_stats_dataset_count)
     logger.info("STATS: Found %i datasets with sr_ref < 0" % b_ref_stats_dataset_with_any_sr_lt0_count)
     logger.info(
         "STATS:     %i datasets with at most 2.5%% of sr_ref < 0" % b_ref_stats_dataset_with_atmost_025prc_sr_lt0_count)
@@ -435,7 +514,17 @@ def main():
     logger.info(
         "STATS:     %i datasets with more than 10%% of sr_ref < 0" % b_ref_stats_dataset_with_morethan_10prc_sr_lt0_count)
 
-    print(b_ref_stats_dataset_count, b_ref_stats_dataset_with_any_sr_lt0_count, b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count)
+    logger.info("STATS: Found %i datasets with sr_maja < 0" % b_maja_stats_dataset_with_any_sr_lt0_count)
+    logger.info(
+        "STATS:     %i datasets with at most 2.5%% of sr_maja < 0" % b_maja_stats_dataset_with_atmost_025prc_sr_lt0_count)
+    logger.info(
+        "STATS:     %i datasets with 2.5%% to 5%% of sr_maja < 0" % b_maja_stats_dataset_with_atmost_05prc_sr_lt0_count)
+    logger.info(
+        "STATS:     %i datasets with 5%% to 10%% of sr_maja < 0" % b_maja_stats_dataset_with_atmost_10prc_sr_lt0_count)
+    logger.info(
+        "STATS:     %i datasets with more than 10%% of sr_maja < 0" % b_maja_stats_dataset_with_morethan_10prc_sr_lt0_count)
+    
+    print(b_common_stats_dataset_count, b_ref_stats_dataset_with_any_sr_lt0_count, b_ref_stats_dataset_with_atmost_10prc_sr_lt0_count)
     print(l_stats)
 
     sys.exit(0)
