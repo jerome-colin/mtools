@@ -400,8 +400,8 @@ def main():
 
     for l in range(len(l_stats)):
         b_ref_stats_dataset_count += 1
-        if (l_stats[l][1] > 0) or (l_stats[l][2] > 0) or (l_stats[l][3] > 0) or (
-                l_stats[l][4] > 0):
+        if (l_stats[l][5] > 0) or (l_stats[l][6] > 0) or (l_stats[l][7] > 0) or (
+                l_stats[l][8] > 0):
             b_ref_stats_dataset_with_any_sr_lt0_count += 1
 
             logger.info("STATS: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
