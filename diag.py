@@ -138,9 +138,7 @@ def main():
                             (m_ref_qa == 1)
                             & (m_maja_qa == 1)
                         )
-                        # min_sr = min(np.min(b_ref_b2), np.min(b_maja_b2))
                         min_sr = -0.1
-                        # max_sr = max(np.max(b_ref_b2), np.max(b_maja_b2))
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
@@ -149,7 +147,6 @@ def main():
                         b_ref_b2_is_valid_and_lt0_count = len(b_ref_b2[is_valid][search].flatten())
                         search = np.where(b_maja_b2[is_valid] < 0)
                         b_maja_b2_is_valid_and_lt0_count = len(b_maja_b2[is_valid][search].flatten())
-                        # print("valid_b2=%i, ref_b2_neg=%i, maja_b2_neg=%i" % (b_ref_b2_is_valid_count, b_ref_b2_is_valid_and_lt0_count, b_maja_b2_is_valid_and_lt0_count))
 
                     else:
                         is_valid = np.where(
@@ -189,9 +186,7 @@ def main():
                             (m_ref_qa == 1)
                             & (m_maja_qa == 1)
                         )
-                        # min_sr = min(np.min(b_ref_b3), np.min(b_maja_b3))
                         min_sr = -0.1
-                        # max_sr = max(np.max(b_ref_b3), np.max(b_maja_b3))
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
@@ -200,8 +195,6 @@ def main():
                         b_ref_b3_is_valid_and_lt0_count = len(b_ref_b3[is_valid][search].flatten())
                         search = np.where(b_maja_b3[is_valid] < 0)
                         b_maja_b3_is_valid_and_lt0_count = len(b_maja_b3[is_valid][search].flatten())
-                        # print("valid_b3=%i, ref_b3_neg=%i, maja_b3_neg=%i" % (
-                        # b_ref_b3_is_valid_count, b_ref_b3_is_valid_and_lt0_count, b_maja_b3_is_valid_and_lt0_count))
 
                     else:
                         is_valid = np.where(
@@ -239,9 +232,7 @@ def main():
                             (m_ref_qa == 1)
                             & (m_maja_qa == 1)
                         )
-                        # min_sr = min(np.min(b_ref_b4), np.min(b_maja_b4))
                         min_sr = -0.1
-                        # max_sr = max(np.max(b_ref_b4), np.max(b_maja_b4))
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
@@ -250,8 +241,6 @@ def main():
                         b_ref_b4_is_valid_and_lt0_count = len(b_ref_b4[is_valid][search].flatten())
                         search = np.where(b_maja_b4[is_valid] < 0)
                         b_maja_b4_is_valid_and_lt0_count = len(b_maja_b4[is_valid][search].flatten())
-                        # print("valid_b4=%i, ref_b4_neg=%i, maja_b4_neg=%i" % (
-                        # b_ref_b4_is_valid_count, b_ref_b4_is_valid_and_lt0_count, b_maja_b4_is_valid_and_lt0_count))
 
                     else:
                         is_valid = np.where(
@@ -289,9 +278,7 @@ def main():
                             (m_ref_qa == 1)
                             & (m_maja_qa == 1)
                         )
-                        # min_sr = min(np.min(b_ref_b8), np.min(b_maja_b8))
                         min_sr = -0.1
-                        # max_sr = max(np.max(b_ref_b8), np.max(b_maja_b8))
                         max_sr = 0.7
                         is_log = False
                         filter_label = "(QA=1)"
@@ -300,8 +287,7 @@ def main():
                         b_ref_b8_is_valid_and_lt0_count = len(b_ref_b8[is_valid][search].flatten())
                         search = np.where(b_maja_b8[is_valid] < 0)
                         b_maja_b8_is_valid_and_lt0_count = len(b_maja_b8[is_valid][search].flatten())
-                        # print("valid_b8=%i, ref_b8_neg=%i, maja_b8_neg=%i" % (
-                        # b_ref_b8_is_valid_count, b_ref_b8_is_valid_and_lt0_count, b_maja_b8_is_valid_and_lt0_count))
+
 
                     else:
                         is_valid = np.where(
@@ -335,7 +321,6 @@ def main():
 
                     fig.tight_layout()
                     fig.subplots_adjust(top=0.88)
-                    # pl.show()
                     pl.savefig(location_name + '_' + timestamp + '_All_quicklooks.png')
                     pl.close('all')
 
@@ -364,8 +349,6 @@ def main():
                         axs.set_title("MAJA Quicklook (B4, B3, B2)")
                         axs.contour(m_maja_qa)
 
-                        # fig.tight_layout()
-                        # pl.show()
                         pl.savefig(location_name + '_' + timestamp + '_Maja_quicklooks.png')
                         pl.close('all')
 
@@ -379,8 +362,6 @@ def main():
                         axs.set_title("REF Quicklook (B4, B3, B2)")
                         axs.contour(m_ref_qa)
 
-                        # fig.tight_layout()
-                        # pl.show()
                         pl.savefig(location_name + '_' + timestamp + '_Ref_quicklooks.png')
                         pl.close('all')
                     except:
@@ -410,14 +391,6 @@ def main():
         if (l_stats[l][5] > 0) or (l_stats[l][6] > 0) or (l_stats[l][7] > 0) or (
                 l_stats[l][8] > 0):
             b_ref_stats_dataset_with_any_sr_lt0_count += 1
-
-            # logger.info("STATS: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
-            #             % (l_stats[l][0],
-            #                l_stats[l][5], l_stats[l][1],
-            #                l_stats[l][6], l_stats[l][2],
-            #                l_stats[l][7], l_stats[l][3],
-            #                l_stats[l][8], l_stats[l][4]
-            #                ))
 
             if max(l_stats[l][5], l_stats[l][6], l_stats[l][7], l_stats[l][8]) <= 20250:
                  logger.info("STATS REF_LT025: %s: b2_ratio=%i/%i, b3_ratio=%i/%i, b4_ratio=%i/%i, b8_ratio=%i/%i"
