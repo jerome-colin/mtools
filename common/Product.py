@@ -67,7 +67,7 @@ class Product:
             self.logger.info("Found file %s for band name %s" % (fband_name[0], band))
             return fband_name[0]
         else:
-            self.logger.error("No match found for band name %s" % band)
+            self.logger.error("%i match found for band name %s in content list: %s" % (len(fband_name), band, self.content_list))
             sys.exit(2)
 
     def get_band(self, band, scalef=None, layer=None, tiny=False):

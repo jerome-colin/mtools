@@ -100,6 +100,14 @@ def main():
                 del clm
                 del edg
 
+                # Issue 32:
+                if bdef_acix[band_id][2] == "R2":
+                    b_maja = b_maja.repeat(2, axis=0).repeat(2, axis=1)
+                    logger.info("Upscaling %s from %s to full resolution with nearest neighbor" % (bdef_acix[band_id][1], bdef_acix[band_id][2]))
+                    m_maja_qa = m_maja_qa.repeat(2, axis=0).repeat(2, axis=1)
+                    logger.info("Upscaling %s QA from %s to full resolution with nearest neighbor" % (bdef_acix[band_id][1], bdef_acix[band_id][2]))
+
+
                 # default filter : any cloudfree flaged both by ref and maja and sr >= 0
                 is_valid = np.where(
                     (b_ref > 0)
