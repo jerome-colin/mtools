@@ -4,11 +4,14 @@ Compute per site and stacked RMSE for ACIX
 
 Require: see mtools.yml for conda environment configuration
 
+1.0.4: bugfix on Maja R2 conflicting with resampled Reference product. Strategy here is to resample Maja R2 at (900, 900)
+pixels with nearest neighbor.
+
 """
 
 __author__ = "jerome.colin'at'cesbio.cnes.fr"
 __license__ = "MIT"
-__version__ = "1.0.3"
+__version__ = "1.0.4"
 
 import sys
 import argparse
@@ -29,8 +32,8 @@ def main():
     parser.add_argument("-s", "--save", help="Write location results as npy instead of stacking in memory",
                         action="store_true", default=False)
     parser.add_argument("-v", "--verbose", help="Set verbosity to DEBUG level", action="store_true", default=False)
-    parser.add_argument("--negative", help="Save sr lt 0", action="store_true", default=False)
-    parser.add_argument("--keepall", help="Keep sr <= 0 but cloudfree", action="store_true", default=False)
+    parser.add_argument("--negative", help="Keep only sr lt 0 and flagged cloud-free", action="store_true", default=False)
+    parser.add_argument("--keepall", help="Keep cloudfree sr <= 0 in the dataset, while default behavior is only rs > 0", action="store_true", default=False)
     parser.add_argument("--stack", help="Stack all sites in one file", action="store_true", default=False)
 
     args = parser.parse_args()
@@ -117,7 +120,7 @@ def main():
                 )
 
                 if args.negative:
-                    # get sr < 0 though flaged cloudfree
+                    # keep only sr < 0 (either ref or maja) though flaged cloudfree
                     is_cloudfree_but_negative = np.where(
                         (m_maja_qa == 1)
                         & (m_ref_qa == 1)
@@ -125,7 +128,7 @@ def main():
                     )
 
                 if args.keepall:
-                    # get sr < 0 though flaged cloudfree
+                    # keep all rs values, negative included, by-pass default is_valid
                     is_cloudfree_keep_all = np.where(
                         (m_maja_qa == 1)
                         & (m_ref_qa == 1)
