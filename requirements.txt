@@ -24,7 +24,7 @@ keyring==17.1.1
 keyrings.alt==3.1.1
 kiwisolver==1.0.1
 louis==3.8.0
-Mako==1.0.7
+Mako==1.2.2
 MarkupSafe==1.1.0
 matplotlib==3.0.2
 meld==3.20.0
