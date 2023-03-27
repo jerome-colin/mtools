@@ -6,7 +6,7 @@ Brlapi==0.6.7
 certifi==2018.8.24
 chardet==3.0.4
 chrome-gnome-shell==0.0.0
-cryptography==3.3.2
+cryptography==39.0.1
 cson==0.7
 cupshelpers==1.0
 cycler==0.10.0
