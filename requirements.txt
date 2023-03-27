@@ -19,7 +19,7 @@ filelock==3.0.12
 GDAL==2.4.0
 idna==2.6
 importlib-metadata==3.4.0
-joblib==0.13.0
+joblib==1.2.0
 keyring==17.1.1
 keyrings.alt==3.1.1
 kiwisolver==1.0.1
