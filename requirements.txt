@@ -48,7 +48,7 @@ pytest==3.10.1
 python-apt==1.8.4.3
 python-dateutil==2.7.3
 pyxdg==0.26
-requests==2.21.0
+requests==2.31.0
 scikit-learn==0.20.2
 scipy==1.1.0
 SecretStorage==2.3.1
